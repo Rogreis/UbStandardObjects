@@ -166,7 +166,7 @@ namespace UbStandardObjects.Objects
         /// Load annotations done for a paper
         /// </summary>
         /// <param name="jsonString"></param>
-        protected abstract List<UbAnnotationsStoreData> LoadAnnotations(short translationId);
+        public abstract List<UbAnnotationsStoreData> LoadAnnotations(short translationId);
 
 
         /// <summary>
