@@ -7,7 +7,7 @@ using System.Text;
 
 namespace UbStandardObjects.Objects
 {
-    public abstract class GetDataFiles
+    public class GetDataFiles
     {
         protected const string TubFilesFolder = "TUB_Files";
 
@@ -31,7 +31,56 @@ namespace UbStandardObjects.Objects
         /// <summary>
         /// Folder for generated files by this app
         /// </summary>
-        protected string StoreFolder = "";
+        protected string LocalStorageFolder = "";
+
+
+        public GetDataFiles(string appFolder, string localStorageFolder)
+        {
+            SourceFolder = Path.Combine(appFolder, TubFilesFolder);
+            LocalStorageFolder = localStorageFolder;
+        }
+
+        /// <summary>
+        /// Get all papers from the zipped file
+        /// </summary>
+        /// <param name="translationId"></param>
+        /// <param name="isZip"></param>
+        /// <returns></returns>
+        protected string GetFile(short translationId, bool isZip = true)
+        {
+            try
+            {
+                string json = "";
+                string translationJsonFilePath = TranslationJsonFilePath(translationId);
+                if (File.Exists(translationJsonFilePath))
+                {
+                    json = File.ReadAllText(translationJsonFilePath);
+                    return json;
+                }
+
+                string translationStartupPath = TranslationFilePath(translationId);
+                if (File.Exists(translationStartupPath))
+                {
+                    StaticObjects.Logger.Info("File exists: " + translationStartupPath);
+                    byte[] bytes = File.ReadAllBytes(translationStartupPath);
+                    json = BytesToString(bytes, isZip);
+                    File.WriteAllText(translationJsonFilePath, json);
+                    return json;
+                }
+                else
+                {
+                    StaticObjects.Logger.Error($"Translation not found {translationId}");
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                StaticObjects.Logger.Error("GetFile", ex);
+                return null;
+            }
+        }
+
+
 
         /// <summary>
         /// Generates the control file full path
@@ -55,7 +104,7 @@ namespace UbStandardObjects.Objects
 
         public string AnnotationsFilePath(TOC_Entry entry)
         {
-            return Path.Combine(StoreFolder, $"{currentAnnotationsFileNAme}-{entry.TranslationId:000}.json");
+            return Path.Combine(LocalStorageFolder, $"{currentAnnotationsFileNAme}-{entry.TranslationId:000}.json");
         }
 
 
@@ -66,7 +115,7 @@ namespace UbStandardObjects.Objects
         /// <returns></returns>
         protected string TranslationJsonFilePath(short translationId)
         {
-            return Path.Combine(StoreFolder, $"TR{translationId:000}.json");
+            return Path.Combine(LocalStorageFolder, $"TR{translationId:000}.json");
         }
 
         /// <summary>
@@ -76,12 +125,12 @@ namespace UbStandardObjects.Objects
         /// <returns></returns>
         protected string TranslationAnnotationsJsonFilePath(short translationId)
         {
-            return Path.Combine(StoreFolder, $"{translationAnnotationsFileName}_{translationId:000}.json");
+            return Path.Combine(LocalStorageFolder, $"{translationAnnotationsFileName}_{translationId:000}.json");
         }
 
         protected string ParagraphAnnotationsJsonFilePath(short translationId)
         {
-            return Path.Combine(StoreFolder, $"{paragraphAnnotationsFileName}_{translationId:000}.json");
+            return Path.Combine(LocalStorageFolder, $"{paragraphAnnotationsFileName}_{translationId:000}.json");
         }
 
 
@@ -162,31 +211,89 @@ namespace UbStandardObjects.Objects
             }
         }
 
+        #region Load & Store Annotations
+        protected void StoreJsonAnnotations(TOC_Entry entry, string jsonAnnotations)
+        {
+            string path = TranslationAnnotationsJsonFilePath(entry.TranslationId);
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+            if (string.IsNullOrWhiteSpace(jsonAnnotations))
+            {
+                return;
+            }
+            File.WriteAllText(path, jsonAnnotations);
+        }
+
         /// <summary>
-        /// Load annotations done for a paper
+        /// Loads a list of all TOC/Annotation done for a paper
         /// </summary>
-        /// <param name="jsonString"></param>
-        public abstract List<UbAnnotationsStoreData> LoadAnnotations(short translationId);
+        /// <param name="translationId"></param>
+        /// <returns></returns>
+        protected string LoadJsonAnnotations(short translationId)
+        {
+            string pathAnnotationsFile = TranslationAnnotationsJsonFilePath(translationId);
+            if (File.Exists(pathAnnotationsFile))
+            {
+                return File.ReadAllText(pathAnnotationsFile);
+            }
+            return null;
+        }
+
+        #endregion
+
 
 
         /// <summary>
-        /// Get a translation
-        /// Verify if alread doanloaded
-        /// </summary>
-        /// <param name="translatioId"></param>
-        public abstract Translation GetTranslation(short translatioId);
-
-        /// <summary>
-        /// 
+        /// Get the translations list from a local file
         /// </summary>
         /// <returns></returns>
-        public abstract List<Translation> GetTranslations();
+        public List<Translation> GetTranslations()
+        {
+            string path = ControlFilePath();
+            string json = File.ReadAllText(path);
+            return Translations.DeserializeJson(json);
+        }
 
         /// <summary>
-        /// Store annotations all annotations
+        /// Get a translation from a local file
         /// </summary>
-        /// <param name="annotations"></param>
-        public abstract void StoreAnnotations(TOC_Entry entry, List<UbAnnotationsStoreData> annotations);
+        /// <param name="translatioId"></param>
+        /// <returns></returns>
+        public virtual Translation GetTranslation(short translatioId)
+        {
+            Translation translation = StaticObjects.Book.GetTranslation(translatioId);
+            if (translation == null)
+            {
+                translation = new Translation();
+            }
+            if (translation.Papers.Count > 0)
+            {
+                return translation;
+            }
+            string json = GetFile(translatioId, true);
+            translation.GetData(json);
+
+            // Loading annotations
+            translation.Annotations = null;
+
+            return translation;
+        }
+
+
+        ///// <summary>
+        ///// Load annotations done for a paper
+        ///// </summary>
+        ///// <param name="jsonString"></param>
+        //public abstract List<UbAnnotationsStoreData> LoadAnnotations(short translationId);
+
+
+        ///// <summary>
+        ///// Store annotations all annotations
+        ///// </summary>
+        ///// <param name="annotations"></param>
+        //public abstract void StoreAnnotations(TOC_Entry entry, List<UbAnnotationsStoreData> annotations);
 
 
     }
