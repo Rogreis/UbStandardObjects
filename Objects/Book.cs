@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace UbStandardObjects.Objects
 {
@@ -8,7 +9,8 @@ namespace UbStandardObjects.Objects
     public abstract class Book
     {
 
-        public string FilesPath { get; set; }
+        protected GetDataFiles DataFiles = null;
+
 
         public Translation LeftTranslation { get; set; }
 
@@ -39,10 +41,32 @@ namespace UbStandardObjects.Objects
             }
         }
 
-        public abstract bool Inicialize(string baseDataPath, short leftTranslationId, short rightTranslationID);
 
         public abstract void StoreAnnotations(TOC_Entry entry, List<UbAnnotationsStoreData> annotations);
 
         public abstract void DeleteAnnotations(TOC_Entry entry);
+
+        public virtual bool Inicialize(GetDataFiles dataFiles, short leftTranslationId, short rightTranslationID)
+        {
+            try
+            {
+                DataFiles = dataFiles;
+                Translations = DataFiles.GetTranslations();
+                LeftTranslation = DataFiles.GetTranslation(leftTranslationId);
+                if (!LeftTranslation.CheckData()) return false;
+                RightTranslation = DataFiles.GetTranslation(rightTranslationID);
+                if (!RightTranslation.CheckData()) return false;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                string message = $"General error getting translations: {ex.Message}. May be you do not have the correct data to use this tool.";
+                StaticObjects.Logger.Error(message, ex);
+                StaticObjects.Logger.FatalError(message);
+                return false;
+            }
+        }
+
+
     }
 }

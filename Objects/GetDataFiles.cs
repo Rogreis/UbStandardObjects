@@ -11,7 +11,7 @@ namespace UbStandardObjects.Objects
     {
         protected const string TubFilesFolder = "TUB_Files";
 
-        protected const string ControlFileName = "Translations.json";
+        protected const string ControlFileName = "AvailableTranslations.json";
 
         protected const string indexFileName = "Index.zip";
 
