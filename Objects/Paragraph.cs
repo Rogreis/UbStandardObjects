@@ -10,6 +10,31 @@ using System.Text.Json.Serialization;
 namespace UbStandardObjects.Objects
 {
 
+    /// <summary>
+    /// Represents the translation status of each paragraph being worked.
+    /// </summary>
+    public enum ParagraphStatus
+    {
+        Started = 0,
+        Working = 1,
+        Doubt = 2,
+        Ok = 3,
+        Closed = 4
+    }
+
+    /// <summary>
+    /// Represents the html format for a paragraph
+    /// </summary>
+    public enum ParagraphHtmlType
+    {
+        BookTitle = 0,
+        PaperTitle = 1,
+        SectionTitle = 2,
+        NormalParagraph = 3,
+        IdentedParagraph = 4
+    }
+
+
     public class Paragraph
     {
         [JsonPropertyName("TranslationID")]
@@ -27,16 +52,27 @@ namespace UbStandardObjects.Objects
         private TOC_Entry entry = null;
 
         /// <summary>
-        /// Status is not to be exported yo json files for UbStudyHelp
+        /// Status is not to be exported to json files for UbStudyHelp
         /// </summary>
         [JsonIgnore]
-        public int Status { get; set; }
+        [JsonPropertyName("Status")]
+        public int _status { get; set; }
 
-        public enHtmlType Format
+        [JsonIgnore]
+        public ParagraphStatus Status
         {
             get
             {
-                return (enHtmlType)FormatInt;
+                return (ParagraphStatus)_status;
+            }
+        }
+
+
+        public ParagraphHtmlType Format
+        {
+            get
+            {
+                return (ParagraphHtmlType)FormatInt;
             }
         }
 

@@ -201,7 +201,7 @@ namespace UbStandardObjects.Objects
 
     internal class TranslationsRoot
     {
-        public Translation[] TranslationsFromSqlServer { get; set; }
+        public Translation[] AvailableTranslations { get; set; }
     }
 
 
@@ -219,10 +219,34 @@ namespace UbStandardObjects.Objects
 
             var translationsRoot = JsonSerializer.Deserialize<TranslationsRoot>(jsonString, options);
             List<Translation> list = new List<Translation>();
-            list.AddRange(translationsRoot.TranslationsFromSqlServer);
+            list.AddRange(translationsRoot.AvailableTranslations);
             return list;
         }
     }
+
+
+    //public class Rootobject
+    //{
+    //    public Availabletranslation[] AvailableTranslations { get; set; }
+    //}
+
+    //public class Availabletranslation
+    //{
+    //    public int LanguageID { get; set; }
+    //    public string Description { get; set; }
+    //    public int Version { get; set; }
+    //    public string TIN { get; set; }
+    //    public string TUB { get; set; }
+    //    public string TextButton { get; set; }
+    //    public int CultureID { get; set; }
+    //    public bool UseBold { get; set; }
+    //    public bool RightToLeft { get; set; }
+    //    public int StartingYear { get; set; }
+    //    public int EndingYear { get; set; }
+    //    public string PaperTranslation { get; set; }
+    //}
+
+
     #endregion
 
 

@@ -13,29 +13,6 @@ namespace UbStandardObjects.Objects
         public Paragraph[] Paragraphs { get; set; }
     }
 
-    /// <summary>
-    /// Represents the translation status of each paragraph being worked.
-    /// </summary>
-    public enum ParagraphStatus
-    {
-        Started = 0,
-        Working = 1,
-        Doubt = 2,
-        Ok = 3,
-        Closed = 4
-    }
-
-
-
-    public enum enHtmlType
-    {
-        BookTitle = 0,
-        PaperTitle = 1,
-        SectionTitle = 2,
-        NormalParagraph = 3,
-        IdentedParagraph = 4
-    }
-
     public class Paper
     {
         [JsonIgnore]
