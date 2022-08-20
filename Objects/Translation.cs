@@ -47,7 +47,6 @@ namespace UbStandardObjects.Objects
         public int EndingYear { get; set; }
         public string PaperTranslation { get; set; }
 
-
         public List<Paper> Papers { get; set; } = new List<Paper>();
 
         /// <summary>
@@ -160,7 +159,7 @@ namespace UbStandardObjects.Objects
         }
 
 
-        public Paper Paper(short PaperNo)
+        public virtual Paper Paper(short PaperNo)
         {
             return Papers.Find(p => p.PaperNo == PaperNo);
         }
@@ -173,6 +172,19 @@ namespace UbStandardObjects.Objects
         public UbAnnotationsStoreData GetAnnotation(TOC_Entry entry)
         {
             return Annotations.FirstOrDefault(a => a.Entry == entry);
+        }
+
+        /// <summary>
+        /// Retuirn the format for an specific paragraph
+        /// Get data from English translation
+        /// </summary>
+        /// <param name="par"></param>
+        /// <returns></returns>
+        public int GetFormat(Paragraph par)
+        {
+            Paper paper = Paper(par.Paper);
+            Paragraph parFound= paper.Paragraphs.Find(p => p.Section == par.Section && p.ParagraphNo == par.ParagraphNo);
+            return parFound.FormatInt;
         }
 
 

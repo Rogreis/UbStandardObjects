@@ -26,7 +26,7 @@ namespace UbStandardObjects.Objects
         /// <summary>
         /// Folder for existing files (translations)
         /// </summary>
-        protected string SourceFolder = "";
+        protected string ApplicationFolderTubFiles = "";
 
         /// <summary>
         /// Folder for generated files by this app
@@ -36,7 +36,7 @@ namespace UbStandardObjects.Objects
 
         public GetDataFiles(string appFolder, string localStorageFolder)
         {
-            SourceFolder = Path.Combine(appFolder, TubFilesFolder);
+            ApplicationFolderTubFiles = Path.Combine(appFolder, TubFilesFolder);
             LocalStorageFolder = localStorageFolder;
         }
 
@@ -88,7 +88,7 @@ namespace UbStandardObjects.Objects
         /// <returns></returns>
         protected string ControlFilePath()
         {
-            return Path.Combine(SourceFolder, ControlFileName);
+            return Path.Combine(ApplicationFolderTubFiles, ControlFileName);
 
         }
 
@@ -99,7 +99,7 @@ namespace UbStandardObjects.Objects
         /// <returns></returns>
         protected string TranslationFilePath(short translationId)
         {
-            return Path.Combine(SourceFolder, $"TR{translationId:000}.gz");
+            return Path.Combine(ApplicationFolderTubFiles, $"TR{translationId:000}.gz");
         }
 
         public string AnnotationsFilePath(TOC_Entry entry)
@@ -189,7 +189,7 @@ namespace UbStandardObjects.Objects
         /// </summary>
         /// <param name="bytes"></param>
         /// <returns></returns>
-        protected string BytesToString(byte[] bytes, bool isZip)
+        protected string BytesToString(byte[] bytes, bool isZip= true)
         {
             if (!isZip)
             {
@@ -280,6 +280,34 @@ namespace UbStandardObjects.Objects
 
             return translation;
         }
+
+        /// <summary>
+        /// Get the zipped format table json and unzipp it to return
+        /// </summary>
+        /// <returns></returns>
+        public string GetFormatTable()
+        {
+            try
+            {
+                string formatTableZippedPath = Path.Combine(ApplicationFolderTubFiles, @"FormatTable.gz");
+
+                if (!File.Exists(formatTableZippedPath))
+                {
+                    StaticObjects.Logger.Error($"Format Table not found {formatTableZippedPath}");
+                    return null;
+                }
+
+                StaticObjects.Logger.Info("File exists: " + formatTableZippedPath);
+                byte[] bytes = File.ReadAllBytes(formatTableZippedPath);
+                return BytesToString(bytes);
+            }
+            catch (Exception ex)
+            {
+                StaticObjects.Logger.Error("GetFormatTable", ex);
+                return null;
+            }
+        }
+
 
 
         ///// <summary>
