@@ -28,6 +28,8 @@ namespace UbStandardObjects.Objects
             }
         }
 
+        public FormatTable FormatTableObject { get; set; } = null;
+
         /// <summary>
         /// Inicialize the list of available translations
         /// </summary>
@@ -70,6 +72,25 @@ namespace UbStandardObjects.Objects
             return trans;
         }
 
+        /// <summary>
+        /// Initialize the format table used for editing translations
+        /// </summary>
+        public FormatTable GetFormatTable()
+        {
+            try
+            {
+                if (FormatTableObject == null)
+                {
+                    FormatTableObject = new FormatTable(DataFiles.GetFormatTable());
+                }
+                return FormatTableObject;
+            }
+            catch (Exception)
+            {
+                StaticObjects.Logger.FatalError($"Missing format table. May be you do not have the correct data to use this tool.");
+                return null;
+            }
+        }
 
 
         /// <summary>

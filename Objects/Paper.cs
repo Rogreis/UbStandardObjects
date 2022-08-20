@@ -51,6 +51,14 @@ namespace UbStandardObjects.Objects
         public List<Paragraph> Paragraphs { get; set; } = new List<Paragraph>();
 
         /// <summary>
+        /// Constructor parameterless
+        /// </summary>
+        public Paper()
+        {
+
+        }
+
+        /// <summary>
         /// Constructor from a json string 
         /// </summary>
         /// <param name="jsonString"></param>
@@ -64,13 +72,6 @@ namespace UbStandardObjects.Objects
             var fullPaper = JsonSerializer.Deserialize<FullPaper>(jsonString, options);
             Paragraphs.AddRange(fullPaper.Paragraphs);
             fullPaper = null;
-        }
-
-        /// <summary>
-        /// Constructor parameterless
-        /// </summary>
-        internal Paper()
-        {
         }
 
 
