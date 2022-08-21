@@ -106,5 +106,6 @@ namespace UbStandardObjects
 
 		public double AnnotationWindowHeight { get; set; } = 450;
 
-	}
+        public HtmlFormatParameters HtmlParam { get; set; } = new HtmlFormatParameters();
+    }
 }

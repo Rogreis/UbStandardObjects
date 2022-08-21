@@ -9,31 +9,10 @@ using System.Linq;
 namespace UbStandardObjects.Objects
 {
 
-    internal class JsonRootobject
-    {
-        public short LanguageID { get; set; }
-        public string Description { get; set; }
-        public string TIN { get; set; }
-        public string TUB { get; set; }
-        public int Version { get; set; }
-        public string TextButton { get; set; }
-        public int CultureID { get; set; }
-        public bool UseBold { get; set; }
-        public bool RightToLeft { get; set; }
-        public short StartingYear { get; set; }
-        public short EndingYear { get; set; }
-        public string PaperTranslation { get; set; }
-        public JsonPaper[] Papers { get; set; }
-    }
-
-    internal class JsonPaper
-    {
-        public Paragraph[] Paragraphs { get; set; }
-    }
-
-
     public class Translation
     {
+        public const short NoTranslation = -1;
+
         public short LanguageID { get; set; }
         public string Description { get; set; }
         public int Version { get; set; }
@@ -201,7 +180,6 @@ namespace UbStandardObjects.Objects
             Annotations.Add(annotation);
         }
 
-
         public override string ToString()
         {
             return LanguageID.ToString() + " - " + Description;
@@ -210,6 +188,27 @@ namespace UbStandardObjects.Objects
     }
 
     #region Classes to import json file
+    internal class JsonRootobject
+    {
+        public short LanguageID { get; set; }
+        public string Description { get; set; }
+        public string TIN { get; set; }
+        public string TUB { get; set; }
+        public int Version { get; set; }
+        public string TextButton { get; set; }
+        public int CultureID { get; set; }
+        public bool UseBold { get; set; }
+        public bool RightToLeft { get; set; }
+        public short StartingYear { get; set; }
+        public short EndingYear { get; set; }
+        public string PaperTranslation { get; set; }
+        public JsonPaper[] Papers { get; set; }
+    }
+
+    internal class JsonPaper
+    {
+        public Paragraph[] Paragraphs { get; set; }
+    }
 
     internal class TranslationsRoot
     {
@@ -235,29 +234,6 @@ namespace UbStandardObjects.Objects
             return list;
         }
     }
-
-
-    //public class Rootobject
-    //{
-    //    public Availabletranslation[] AvailableTranslations { get; set; }
-    //}
-
-    //public class Availabletranslation
-    //{
-    //    public int LanguageID { get; set; }
-    //    public string Description { get; set; }
-    //    public int Version { get; set; }
-    //    public string TIN { get; set; }
-    //    public string TUB { get; set; }
-    //    public string TextButton { get; set; }
-    //    public int CultureID { get; set; }
-    //    public bool UseBold { get; set; }
-    //    public bool RightToLeft { get; set; }
-    //    public int StartingYear { get; set; }
-    //    public int EndingYear { get; set; }
-    //    public string PaperTranslation { get; set; }
-    //}
-
 
     #endregion
 
