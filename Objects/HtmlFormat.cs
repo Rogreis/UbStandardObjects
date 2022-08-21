@@ -349,6 +349,17 @@ namespace UbStandardObjects.Objects
 
         #endregion
 
+        private Paper GetPaper(short paperNo, Translation translation)
+        {
+            if (translation is TranslationEdit)
+            {
+                return ((TranslationEdit)translation).Paper(paperNo);
+            }
+            else
+            {
+                return translation.Papers[paperNo]; ;
+            }
+        }
 
         /// <summary>
         /// Generatre an html page with 1, 2 or 3 text columns
@@ -370,20 +381,20 @@ namespace UbStandardObjects.Objects
             if (rightTranslation != null)
             {
                 TranslationIdRight = rightTranslation.LanguageID;
-                rightPaper = rightTranslation.Papers[paperNo];
+                rightPaper = GetPaper(paperNo, rightTranslation);
                 TranslationTextDirection[0] = rightTranslation.RightToLeft;
                 // private bool[] TextDirection = { RightToLeft, RightToLeft, RightToLeft };
             }
             if (middleTranslation != null)
             {
                 TranslationIdMiddle = middleTranslation.LanguageID;
-                middlePaper = middleTranslation.Papers[paperNo];
+                middlePaper = GetPaper(paperNo, middleTranslation);
                 TranslationTextDirection[1] = middleTranslation.RightToLeft;
             }
             if (leftTranslation != null)
             {
                 TranslationIdLeft = leftTranslation.LanguageID;
-                leftPaper = leftTranslation.Papers[paperNo];
+                leftPaper = GetPaper(paperNo, leftTranslation);
                 TranslationTextDirection[2] = leftTranslation.RightToLeft;
             }
 
