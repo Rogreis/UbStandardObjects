@@ -107,5 +107,21 @@ namespace UbStandardObjects
 		public double AnnotationWindowHeight { get; set; } = 450;
 
         public HtmlFormatParameters HtmlParam { get; set; } = new HtmlFormatParameters();
+
+		/// <summary>
+		/// Work local repository for paragraphs
+		/// </summary>
+        public string TranslationRepositoryFolder { get; set; } = null;
+
+		/// <summary>
+		/// Full book pages local repository
+		/// </summary>
+        public string BookRepositoryFolder { get; set; } = null;
+
+		/// <summary>
+		/// Github paragraphs repository
+		/// </summary>
+		public string UrlRepository { get; set; } = null;
+
     }
 }

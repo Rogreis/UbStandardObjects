@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using UbStandardObjects.Objects;
+using UBT_WebSite.Classes;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace UbStandardObjects.Objects
 {
@@ -10,21 +12,21 @@ namespace UbStandardObjects.Objects
     /// </summary>
     public class HtmlFormat
     {
-        private const bool RightToLeft = false;
+        protected const bool RightToLeft = false;
 
         // Data used to help columns page
-        private double percent = 0;
+        protected double percent = 0;
 
-        private HtmlFormatParameters Param = null;
+        protected HtmlFormatParameters Param = null;
 
-        private short TranslationIdLeft = Translation.NoTranslation;
+        protected short TranslationIdLeft = Translation.NoTranslation;
 
-        private short TranslationIdMiddle = Translation.NoTranslation;
+        protected short TranslationIdMiddle = Translation.NoTranslation;
 
-        private short TranslationIdRight = Translation.NoTranslation;
+        protected short TranslationIdRight = Translation.NoTranslation;
 
         // By default all 3 translations are not right to left written
-        private bool[] TranslationTextDirection = { RightToLeft, RightToLeft, RightToLeft };
+        protected bool[] TranslationTextDirection = { RightToLeft, RightToLeft, RightToLeft };
 
 
         public HtmlFormat(HtmlFormatParameters parameters)
@@ -34,7 +36,7 @@ namespace UbStandardObjects.Objects
 
         #region Styles
 
-        private void paragraphStyle(StringBuilder sb, ParagraphStatus ParagraphStatus)
+        protected void paragraphStyle(StringBuilder sb, ParagraphStatus ParagraphStatus)
         {
             sb.AppendLine("." + statusStyleName(ParagraphStatus));
             sb.AppendLine("{  ");
@@ -45,8 +47,7 @@ namespace UbStandardObjects.Objects
             sb.AppendLine("}  ");
         }
 
-
-        private void javaScript(StringBuilder sb)
+        protected void javaScript(StringBuilder sb)
         {
             sb.AppendLine("<script> ");
             sb.AppendLine(" ");
@@ -65,7 +66,7 @@ namespace UbStandardObjects.Objects
             sb.AppendLine(" ");
         }
 
-        private void ItalicBoldStyles(StringBuilder sb)
+        protected void ItalicBoldStyles(StringBuilder sb)
         {
             sb.AppendLine("i, b, em  {  ");
             sb.AppendLine(" font-family: " + Param.FontFamily + ";");
@@ -75,7 +76,7 @@ namespace UbStandardObjects.Objects
             sb.AppendLine("}  ");
         }
 
-        private void HeaderStyle(StringBuilder sb, int header, float size)
+        protected void HeaderStyle(StringBuilder sb, int header, float size)
         {
             sb.AppendLine($"h{header} {{");
             sb.AppendLine($"font-family: {Param.FontFamily};");
@@ -87,7 +88,11 @@ namespace UbStandardObjects.Objects
             sb.AppendLine("}");
         }
 
-        protected void Styles(StringBuilder sb)
+        /// <summary>
+        /// Create the styles for the page
+        /// </summary>
+        /// <param name="sb"></param>
+        protected virtual void Styles(StringBuilder sb)
         {
 
             float size = Param.FontSize;
@@ -98,7 +103,7 @@ namespace UbStandardObjects.Objects
             // Body and Table
             sb.AppendLine($"body {{font-family: {Param.FontFamily}; font-size: {size + 4}px; color: #000000;}}");
             sb.AppendLine("table {  ");
-            sb.AppendLine("    border: 1px solid #CCC;  ");
+            sb.AppendLine("    border: 0px solid #CCC;  ");
             sb.AppendLine("    border-collapse: collapse;  ");
             sb.AppendLine("}  ");
             sb.AppendLine($"td   {{font-family: {Param.FontFamily}; padding: 10px; font-size: {size + 4}px; color: #000000; text-align: left; font-style: none; text-transform: none; font-weight: none; border: none;}}");
@@ -165,11 +170,11 @@ namespace UbStandardObjects.Objects
             return Param.statusBackgroundColor(ParagraphStatus);
         }
 
-        private string statusStyleName(ParagraphStatus ParagraphStatus)
+        protected string statusStyleName(ParagraphStatus ParagraphStatus)
         {
             return "stPar" + ParagraphStatus.ToString();
         }
-        private string statusStyleHighlightedName(ParagraphStatus ParagraphStatus)
+        protected string statusStyleHighlightedName(ParagraphStatus ParagraphStatus)
         {
             return "stParHigh" + ParagraphStatus.ToString();
         }
@@ -179,7 +184,7 @@ namespace UbStandardObjects.Objects
         /// </summary>
         /// <param name="translation"></param>
         /// <returns></returns>
-        private string TextDirection(Paragraph p)
+        protected string TextDirection(Paragraph p)
         {
             if (p.TranslationId == TranslationIdLeft)
             {
@@ -197,7 +202,7 @@ namespace UbStandardObjects.Objects
 
 
         #region Html Start and End
-        private void pageStart(StringBuilder sb, int paperNo, bool compareStyles = false)
+        protected void pageStart(StringBuilder sb, int paperNo, bool compareStyles = false)
         {
             sb.AppendLine("<HTML>");
             sb.AppendLine("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=windows-1252\">");
@@ -207,7 +212,7 @@ namespace UbStandardObjects.Objects
             sb.AppendLine("<BODY>");
         }
 
-        private void pageEnd(StringBuilder sb)
+        protected void pageEnd(StringBuilder sb)
         {
             sb.AppendLine("</BODY>");
             sb.AppendLine("</HTML>");
@@ -217,7 +222,7 @@ namespace UbStandardObjects.Objects
 
 
         #region Working with DIV's
-        private string DivName(Paragraph p)
+        protected string DivName(Paragraph p)
         {
             if (p.TranslationId == TranslationIdLeft)
             {
@@ -235,7 +240,7 @@ namespace UbStandardObjects.Objects
         }
 
 
-        private string makeDIV(Paragraph p, bool selected = false)
+        protected virtual string makeDIV(Paragraph p, bool selected = false)
         {
             string TextClass = (selected) ? "class=\"" + statusStyleHighlightedName(p.Status) + "\"" : "class=\"" + statusStyleName(p.Status) + "\"";
             string textDirection = TextDirection(p);
@@ -273,7 +278,7 @@ namespace UbStandardObjects.Objects
         }
         #endregion
 
-        private string ShowErrorMessage(string Message)
+        protected string ShowErrorMessage(string Message)
         {
             return "<P>" + Message + "</P>";
         }
@@ -288,7 +293,7 @@ namespace UbStandardObjects.Objects
         /// <param name="middleTranslation"></param>
         /// <param name="leftTranslation"></param>
         /// <param name="showCompare"></param>
-        private void CalcColumnsSize(Translation rightTranslation, Translation middleTranslation = null, Translation leftTranslation = null, bool showCompare = false)
+        protected void CalcColumnsSize(Translation rightTranslation, Translation middleTranslation = null, Translation leftTranslation = null, bool showCompare = false)
         {
             int fator = 1;
             if (middleTranslation != null)
@@ -309,7 +314,7 @@ namespace UbStandardObjects.Objects
         }
 
 
-        private void HtmlFomatPage(StringBuilder sb, short paperNo, List<Paragraph> rightTranslation, List<Paragraph> middleTranslation = null, List<Paragraph> leftTranslation = null, bool showCompare = false)
+        protected virtual void HtmlFomatPage(StringBuilder sb, short paperNo, List<Paragraph> rightTranslation, List<Paragraph> middleTranslation = null, List<Paragraph> leftTranslation = null, bool showCompare = false)
         {
             try
             {
@@ -349,7 +354,7 @@ namespace UbStandardObjects.Objects
 
         #endregion
 
-        private Paper GetPaper(short paperNo, Translation translation)
+        protected Paper GetPaper(short paperNo, Translation translation)
         {
             if (translation is TranslationEdit)
             {
@@ -370,12 +375,15 @@ namespace UbStandardObjects.Objects
         /// <param name="leftTranslation"></param>
         /// <param name="showCompare"></param>
         /// <returns></returns>
-        public string FormatPaper(short paperNo, Translation rightTranslation, Translation middleTranslation = null, Translation leftTranslation = null, bool showCompare = false)
+        public virtual string FormatPaper(short paperNo, Translation rightTranslation, Translation middleTranslation = null, Translation leftTranslation = null, bool showCompare = false)
         {
             // Default values
             Paper rightPaper = null, middlePaper = null, leftPaper = null;
             TranslationIdRight = TranslationIdMiddle = TranslationIdLeft = Translation.NoTranslation;
             TranslationTextDirection[0] = TranslationTextDirection[1] = TranslationTextDirection[2] = false;
+            List<Paragraph> rightParagraphs = null; 
+            List<Paragraph> middleParagraphs = null; 
+            List<Paragraph> leftParagraphs = null;
 
             // Current values
             if (rightTranslation != null)
@@ -383,19 +391,21 @@ namespace UbStandardObjects.Objects
                 TranslationIdRight = rightTranslation.LanguageID;
                 rightPaper = GetPaper(paperNo, rightTranslation);
                 TranslationTextDirection[0] = rightTranslation.RightToLeft;
-                // private bool[] TextDirection = { RightToLeft, RightToLeft, RightToLeft };
+                rightParagraphs = rightPaper.Paragraphs;
             }
             if (middleTranslation != null)
             {
                 TranslationIdMiddle = middleTranslation.LanguageID;
                 middlePaper = GetPaper(paperNo, middleTranslation);
                 TranslationTextDirection[1] = middleTranslation.RightToLeft;
+                middleParagraphs = middlePaper.Paragraphs;
             }
             if (leftTranslation != null)
             {
                 TranslationIdLeft = leftTranslation.LanguageID;
                 leftPaper = GetPaper(paperNo, leftTranslation);
                 TranslationTextDirection[2] = leftTranslation.RightToLeft;
+                leftParagraphs = leftPaper.Paragraphs;
             }
 
 
@@ -403,223 +413,35 @@ namespace UbStandardObjects.Objects
             StringBuilder sb = new StringBuilder();
             pageStart(sb, paperNo);
 
-            HtmlFomatPage(sb, paperNo, rightPaper.Paragraphs, middlePaper.Paragraphs, leftPaper.Paragraphs, showCompare);
+            HtmlFomatPage(sb, paperNo, rightParagraphs, middleParagraphs, leftParagraphs, showCompare);
 
             pageEnd(sb);
             return sb.ToString();
         }
 
+        public string FormatParagraph(string title, string text)
+        {
+            StringBuilder sb = new StringBuilder();
+            pageStart(sb, 1, true);
+            sb.AppendLine($"<h2>{title}</h2>");
+            sb.AppendLine($"<p>{text}</p>");
+            pageEnd(sb);
+            return sb.ToString();
+        }
 
-
-        //private string HtmlCompare(Paragraph p, FullPaperCompareTranslation fullPaperCompareTranslation)
-        //{
-        //	try
-        //	{
-        //		Merger merger = null;
-        //		switch (fullPaperCompareTranslation)
-        //		{
-        //			case FullPaperCompareTranslation.Left:
-        //				merger = new Merger(p.HtmlTextLeft, p.HtmlTextRight);
-        //				break;
-        //			case FullPaperCompareTranslation.Middle:
-        //				merger = new Merger(p.HtmlTextMiddle, p.HtmlTextRight);
-        //				break;
-        //			default:
-        //				return "";
-        //		}
-        //		return "<div id=\"divmerge_" + p.ParaIdent + "\" class=\"" + statusStyleName(ParagraphStatus.Started) + "\">" + merger.merge() + "</div>";
-        //	}
-        //	catch (Exception)
-        //	{
-        //		return "<div id=\"divmerge_" + p.ParaIdent + "\" class=\"" + statusStyleName(ParagraphStatus.Started) + "\">&nbsp;</div>";
-        //	}
-        //}
-
-
-
-
-        //private void titleLine(StringBuilder sb)
-        //{
-        //	sb.AppendLine("<div class=\"titleDiv\"><tr>");
-        //	sb.AppendLine("<table border=\"1\" width=\"100%\" id=\"table1\" cellspacing=\"4\" cellpadding=\"0\">");
-
-        //	if (percentFullPaperLeftColumn > 0)
-        //	{
-        //		TranslationToShow trans = User.GetTranslationData(Param.FullPageLeftTranslationId);
-        //		if (trans != null)
-        //			sb.AppendLine("<td width= \"" + percent.ToString("0.00") + "%\" valign=\"top\">" + trans.Description + "</td>");
-        //		else
-        //			sb.AppendLine("<td width= \"" + percent.ToString("0.00") + "%\" valign=\"top\">Left Translation</td>");
-        //	}
-
-        //	if (percentFullPaperColumnMiddle > 0)
-        //	{
-        //		percentFullPaperColumnMiddle = 1;
-        //		TranslationToShow trans = User.GetTranslationData(Param.FullPageMiddleTranslationId);
-        //		if (trans != null)
-        //			sb.AppendLine("<td width= \"" + percent.ToString("0.00") + "%\" valign=\"top\">" + trans.Description + "</td>");
-        //		else
-        //			sb.AppendLine("<td width= \"" + percent.ToString("0.00") + "%\" valign=\"top\">Middle Translation</td>");
-        //	}
-
-        //	if (percentFullPaperColumnRight > 0)
-        //		sb.AppendLine("<td width= \"" + percent.ToString("0.00") + "%\" valign=\"top\">Working text</td>");
-
-        //	if (percentColumnMerge > 0)
-        //		sb.AppendLine("<td width= \"" + percent.ToString("0.00") + "%\" valign=\"top\">Compare</td>");
-
-        //	sb.AppendLine("</tr></table></div>");
-        //}
-
-
-        //private void formatFullPageLine(Paragraph p, StringBuilder sb, FullPaperCompareTranslation fullPaperCompareTranslation)
-        //{
-        //	sb.AppendLine("<tr>");
-        //	if (percentFullPaperLeftColumn > 0)
-        //		sb.AppendLine("<td width= \"" + percent.ToString("0.00") + "%\" valign=\"top\">" + makeLeftDIV(p) + "</td>");
-
-        //	if (percentFullPaperColumnMiddle > 0)
-        //		sb.AppendLine("<td width= \"" + percent.ToString("0.00") + "%\" valign=\"top\">" + makeMiddleDIV(p, false) + "</td>");
-
-        //	if (percentFullPaperColumnRight > 0)
-        //		sb.AppendLine("<td width= \"" + percent.ToString("0.00") + "%\" valign=\"top\">" + makeRightDIV(p, false) + "</td>");
-
-        //	if (percentColumnMerge > 0)
-        //		sb.AppendLine("<td width= \"" + percent.ToString("0.00") + "%\" valign=\"top\">" + HtmlCompare(p, fullPaperCompareTranslation) + "</td>");
-
-        //	sb.AppendLine("</tr>");
-        //}
-
-        //private string PlainText(SearchDataResult s)
-        //{
-        //	var document = new HtmlDocument();
-        //	document.LoadHtml(s.Text);
-        //	return HtmlEntity.DeEntitize(document.DocumentNode.InnerText);
-        //}
-
-
-        //private void formatSearchPageLine(SearchDataResult s, StringBuilder sb)
-        //{
-        //	string HtmlLink = "<a target=\"_blank\" href=\"about:blank\" id=\"" + s.ParaIdent + "\">" + s.Identification + " " + PlainText(s) + "</a>";
-        //	sb.AppendLine("<li>" + HtmlLink + "</li> ");
-        //}
-
-
-
-        //private void GenerateFullWorkHtmlPage(List<Paragraph> workFullPageParagraphs, FullPaperCompareTranslation fullPaperCompareTranslation)
-        //{
-        //	// Shows up to 4 columns paper document
-        //	CalcColumnsSize();
-        //	StringBuilder sb = new StringBuilder();
-        //	try
-        //	{
-        //		pageStart(sb, Param.PaperId);
-        //		titleLine(sb);
-        //		sb.AppendLine("<table border=\"1\" width=\"100%\" id=\"table1\" cellspacing=\"4\" cellpadding=\"0\">");
-
-        //		foreach (Paragraph p in workFullPageParagraphs)
-        //			formatFullPageLine(p, sb, fullPaperCompareTranslation);
-
-        //		sb.AppendLine("</table>");
-        //		pageEnd(sb);
-
-        //		HtmlPage = sb.ToString();
-        //	}
-        //	catch (Exception ex)
-        //	{
-        //		HtmlPage = ShowErrorMessage(ex.Message);
-        //	}
-        //}
-
-
-        //private void GenerateSearchHtmlPage(List<SearchDataResult> searchdataResults)
-        //{
-        //	// Shows up to 4 columns paper document
-        //	CalcColumnsSize();
-        //	StringBuilder sb = new StringBuilder();
-        //	try
-        //	{
-        //		pageStart(sb, Param.PaperId);
-        //		sb.AppendLine("<p><b>Query results:</b></p>");
-        //		sb.AppendLine("<ol>");
-        //		foreach (SearchDataResult s in searchdataResults)
-        //			formatSearchPageLine(s, sb);
-        //		sb.AppendLine("</ol>");
-        //		pageEnd(sb);
-
-        //		HtmlPage = sb.ToString();
-        //	}
-        //	catch (Exception ex)
-        //	{
-        //		HtmlPage = ShowErrorMessage(ex.Message);
-        //	}
-
-        //}
-
-
-        //public virtual bool Format(List<Paragraph> workFullPageParagraphs, FullPaperCompareTranslation fullPaperCompareTranslation)
-        //{
-        //	if (workFullPageParagraphs == null)
-        //	{
-        //		return false;
-        //	}
-        //	try
-        //	{
-        //		GenerateFullWorkHtmlPage(workFullPageParagraphs, fullPaperCompareTranslation);
-        //		return true;
-        //	}
-        //	catch (Exception ex)
-        //	{
-        //		HtmlPage = ShowErrorMessage(ex.Message);
-        //		return false;
-        //	}
-        //}
-
-        //public bool FormatSearchHtmlPaper(List<SearchDataResult> searchdataResults)
-        //{
-        //	try
-        //	{
-        //		GenerateSearchHtmlPage(searchdataResults);
-        //		return true;
-        //	}
-        //	catch (Exception ex)
-        //	{
-        //		HtmlPage = ShowErrorMessage(ex.Message);
-        //		return false;
-        //	}
-        //}
-
-        //public bool FormatComparePage(List<Paragraph> workFullPageParagraphs)
-        //{
-        //	if (workFullPageParagraphs == null)
-        //	{
-        //		return false;
-        //	}
-        //	try
-        //	{
-        //		GenerateComparePage(workFullPageParagraphs);
-        //		return true;
-        //	}
-        //	catch (Exception ex)
-        //	{
-        //		HtmlPage = ShowErrorMessage(ex.Message);
-        //		return false;
-        //	}
-        //}
-
-
-        //public void FormatPageWithErrorMessage(string message)
-        //{
-        //	StringBuilder sb = new StringBuilder();
-        //	pageStart(sb, Param.PaperId);
-        //	sb.AppendLine("<p><b>" + message + "</b></p>");
-        //	pageEnd(sb);
-        //	HtmlPage = sb.ToString();
-        //}
-
-
-
-
+        public string HtmlCompare(string textOld, string textNew)
+        {
+            try
+            {
+                Merger merger = null;
+                merger = new Merger(textOld, textNew);
+                return FormatParagraph("Compare", merger.merge());
+            }
+            catch (Exception ex)
+            {
+                return FormatParagraph("Error", $"MergeEngine error: {ex.Message}"); ;
+            }
+        }
 
     }
 }

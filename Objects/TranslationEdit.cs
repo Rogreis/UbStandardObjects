@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using UbStandardObjects;
 using UbStandardObjects.Objects;
 
@@ -36,6 +38,35 @@ namespace UbStandardObjects.Objects
             return GetPaperEdit(paperNo);
         }
 
+        public List<BookIndex> GetTranslationIndex()
+        {
+            List<BookIndex> list = new List<BookIndex>();
+
+            for (short paperNo= 0; paperNo<197; paperNo++)
+            {
+                string folderPath= Path.Combine(LocalRepositoryFolder, $"Doc{paperNo:000}");
+                string filePaperTitle= Path.Combine(folderPath, $"Par_{paperNo:000}_000_000.md");
+                BookIndex index = new BookIndex()
+                {
+                    PaperNo = paperNo,
+                    Text = File.ReadAllText(filePaperTitle, Encoding.UTF8),
+                };
+                list.Add(index);
+                foreach (string mdFile in Directory.GetFiles(folderPath, $"Par_{paperNo:000}_*.md"))
+                {
+                    string fileName = Path.GetFileNameWithoutExtension(mdFile);
+                    BookIndex indexSection = new BookIndex()
+                    {
+                        Section = Convert.ToInt16(fileName.Substring(8, 3)),
+                        ParagraphNo = Convert.ToInt16(fileName.Substring(12, 3))
+                    };
+                    index.SubItems.Add(indexSection);
+                };
+
+
+            }
+            return list;
+        }
 
 
     }
