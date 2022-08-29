@@ -106,6 +106,7 @@ namespace UbStandardObjects.Objects
             sb.AppendLine("    border: 0px solid #CCC;  ");
             sb.AppendLine("    border-collapse: collapse;  ");
             sb.AppendLine("}  ");
+
             sb.AppendLine($"td   {{font-family: {Param.FontFamily}; padding: 10px; font-size: {size + 4}px; color: #000000; text-align: left; font-style: none; text-transform: none; font-weight: none; border: none;}}");
 
             // Sup
@@ -142,18 +143,21 @@ namespace UbStandardObjects.Objects
             sb.AppendLine("} ");
             sb.AppendLine(" ");
             sb.AppendLine("/* mouse over link */ ");
-            sb.AppendLine("a:hover { ");
+
+            //sb.AppendLine("a:hover { ");
+            ////sb.AppendLine("  color: blue; ");
+            ////sb.AppendLine("  text-decoration: none; ");
+            //sb.AppendLine("  font-weight: bold; ");
+            //sb.AppendLine("} ");
+            //sb.AppendLine(" ");
+            //sb.AppendLine("/* selected link */ ");
+
+            //sb.AppendLine("a:active { ");
             //sb.AppendLine("  color: blue; ");
             //sb.AppendLine("  text-decoration: none; ");
-            sb.AppendLine("  font-weight: bold; ");
-            sb.AppendLine("} ");
-            sb.AppendLine(" ");
-            sb.AppendLine("/* selected link */ ");
-            sb.AppendLine("a:active { ");
-            sb.AppendLine("  color: blue; ");
-            sb.AppendLine("  text-decoration: none; ");
-            //sb.AppendLine("  font-weight: bold; ");
-            sb.AppendLine("} ");
+            ////sb.AppendLine("  font-weight: bold; ");
+            //sb.AppendLine("} ");
+
             sb.AppendLine(" ");
 
             // Italic
