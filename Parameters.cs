@@ -66,13 +66,6 @@ namespace UbStandardObjects
 		public string LastTrackFileSaved { get; set; } = "";
 
 
-		/// <summary>
-		/// Git associated repository folder
-		/// </summary>
-		public string RepositoryOutputFolder { get; set; } = "";
-
-		public string RepositoryOutputPTAlternativeFolder { get; set; } = "";
-
 		public string InputHtmlFilesPath { get; set; } = "";
 
 		public string IndexDownloadedFiles { get; set; } = "";
@@ -108,15 +101,26 @@ namespace UbStandardObjects
 
         public HtmlFormatParameters HtmlParam { get; set; } = new HtmlFormatParameters();
 
+		
 		/// <summary>
-		/// Work local repository for paragraphs
+		/// Currente executable folder initialize every execution
 		/// </summary>
-        public string TranslationRepositoryFolder { get; set; } = null;
+		public string ApplicationFolder { get; set; } = "";
+
+        /// <summary>
+        /// Git associated repository folder
+        /// </summary>
+        public string TUB_Files_RepositoryFolder { get; set; } = "";
+        
+		/// <summary>
+        /// Work local repository for paragraphs
+        /// </summary>
+        public string EditParagraphsRepositoryFolder { get; set; } = null;
 
 		/// <summary>
 		/// Full book pages local repository
 		/// </summary>
-        public string BookRepositoryFolder { get; set; } = null;
+        public string EditBookRepositoryFolder { get; set; } = null;
 
 		/// <summary>
 		/// Github paragraphs repository

@@ -6,7 +6,7 @@ namespace UbStandardObjects.Objects
     /// <summary>
     /// Bilingual book main organization
     /// </summary>
-    public abstract class Book
+    public class Book
     {
 
         protected GetDataFiles DataFiles = null;
@@ -157,11 +157,17 @@ namespace UbStandardObjects.Objects
             }
         }
 
-        public abstract void StoreAnnotations(TOC_Entry entry, List<UbAnnotationsStoreData> annotations);
+        public virtual void StoreAnnotations(TOC_Entry entry, List<UbAnnotationsStoreData> annotations)
+        {
 
-        public abstract void DeleteAnnotations(TOC_Entry entry);
+        }
+
+        public virtual void DeleteAnnotations(TOC_Entry entry)
+        {
+
+        }
 
 
 
-    }
+}
 }

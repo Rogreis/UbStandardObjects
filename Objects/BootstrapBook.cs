@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace UbStandardObjects.Objects
 {
@@ -16,7 +17,10 @@ namespace UbStandardObjects.Objects
     /// </summary>
     public class BootstrapBook : HtmlFormat
     {
+        protected List<BookIndex> indexList = null;
+
         protected string FontName { get; set; } = "Verdana";
+
         protected float FontSize { get; set; } = 14;
 
         public event dlShowMessage ShowMessage = null;
@@ -29,6 +33,11 @@ namespace UbStandardObjects.Objects
         protected override void Styles(StringBuilder sb)
         {
             sb.AppendLine("<style type=\"text/css\">  ");
+
+            sb.AppendLine("div { ");
+            sb.AppendLine("  text-align: justify; ");
+            sb.AppendLine("  text-justify: inter-word; ");
+            sb.AppendLine("} ");
 
             //sb.AppendLine("@page { ");
             //sb.AppendLine("  size: 7in 9.25in; ");
@@ -86,8 +95,19 @@ namespace UbStandardObjects.Objects
             sb.AppendLine(" ");
         }
 
+        private string Link(string href, string text)
+        {
+            return $"<a class=\"page-link\" href=\"{href}\">{text}</a>";
+        }
 
-        private void PageStart(StringBuilder sb, string bookTitle, string bookSubTitle)
+        private string IdentLink(Paragraph p)
+        {
+            string href = $"https://github.com/Rogreis/PtAlternative/blob/correcoes/Doc{p.Paper:000}/Par_{p.Paper:000}_{p.Section:000}_{p.ParagraphNo:000}.md";
+            return $"<a href=\"{href}\">{p.Identification}</a>";
+        }
+
+
+        private void PageStart(StringBuilder sb, string bookTitle, string bookSubTitle, short paperNo)
         {
             // 
             sb.AppendLine("<!DOCTYPE html>");
@@ -114,7 +134,7 @@ namespace UbStandardObjects.Objects
             //  Jumbotron
             sb.AppendLine("  <div class=\"mt-4 p-5 bg-primary text-white rounded\"> ");
             sb.AppendLine($"    <h1>{bookTitle}</h1>  ");
-            sb.AppendLine($"    <p>{bookSubTitle}</p>  ");
+            sb.AppendLine($"    <p>{bookSubTitle}   {Link($"https://sxs.urantia.org/en/pt/papers/{paperNo:000}", "Urantia Foundation Multi Language")}</p>  ");
             sb.AppendLine("     <button class=\"btn btn-warning\" type=\"button\" data-bs-toggle=\"offcanvas\" data-bs-target=\"#offcanvasTUB\"> ");
             //sb.AppendLine("     <button class=\"btn btn-warning\" type=\"button\" class=\"btn-close\">Print</button> ");
             sb.AppendLine("    Open Index ");
@@ -176,21 +196,24 @@ namespace UbStandardObjects.Objects
         private void PrintPager(StringBuilder sb, List<BookIndex> list, short paperNo)
         {
             sb.AppendLine("<ul class=\"pagination\"> ");
-            sb.AppendLine("  <li class=\"page-item\"><a class=\"page-link\" href=\"#\">Previous</a></li> ");
+            if (paperNo > 0)
+            {
+                BookIndex provious= list[paperNo-1];
+                sb.AppendLine($"  <li class=\"page-item\"><a class=\"page-link\" href=\"{provious.Href}\">Previous</a></li> ");
+            }
             foreach (BookIndex index in list)
             {
                 string active = index.PaperNo == paperNo ? "active" : "";
                 sb.AppendLine($"  <li class=\"page-item {active}\"><a class=\"page-link\" href=\"{index.Href}\">{index.PaperNo:000}</a></li> ");
             }
-            sb.AppendLine("  <li class=\"page-item\"><a class=\"page-link\" href=\"#\">Next</a></li> ");
+            if (paperNo < 196)
+            {
+                BookIndex next = list[paperNo + 1];
+                sb.AppendLine($"  <li class=\"page-item\"><a class=\"page-link\" href=\"{next.Href}\">Next</a></li> ");
+            }
             sb.AppendLine("</ul> ");
         }
 
-        private string IdentLink(Paragraph p)
-        {
-            string href= $"https://github.com/Rogreis/PtAlternative/blob/correcoes/Doc{p.Paper:000}/Par_{p.Paper:000}_{p.Section:000}_{p.ParagraphNo:000}.md";
-            return $"<a href=\"{href}\">{p.Identification}</a>";
-        }
 
 
         protected void MakeDIV(StringBuilder sb, Paragraph p, bool useLink= false)
@@ -241,7 +264,7 @@ namespace UbStandardObjects.Objects
         private void PrintPaper(string destinationFolder, short paperNo, List<BookIndex> list, Paper leftPaper, Paper rightPaper)
         {
             StringBuilder sb = new StringBuilder();
-            PageStart(sb, $"O Livro de Urântia - Documento {paperNo}", "Versão Bilingue - edição PT-BR");
+            PageStart(sb, $"O Livro de Urântia - Documento {paperNo}", $"PT-BR version: {DateTime.Now.ToString("dd-MM-yyyy")}", paperNo);
             PrintIndex(sb, list, paperNo);
 
             for (int i = 0; i < leftPaper.Paragraphs.Count; i++)
@@ -269,10 +292,59 @@ namespace UbStandardObjects.Objects
             File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
         }
 
-        public void Generate(string destinationFolder, Translation leftTranslation, Translation rightTranslation)
+
+        public void GeneratPaper(string destinationFolder, Translation leftTranslation, Translation rightTranslation, short paperNo)
+        {
+            if (indexList == null)
+            {
+                indexList = ((TranslationEdit)rightTranslation).GetTranslationIndex();
+            }
+
+
+            try
+            {
+                Paper rightPaper = null, leftPaper = null;
+                TranslationIdRight = TranslationIdLeft = Translation.NoTranslation;
+                TranslationTextDirection[0] = TranslationTextDirection[2] = false;
+
+                if (rightTranslation != null)
+                {
+                    TranslationIdRight = rightTranslation.LanguageID;
+                    TranslationTextDirection[0] = rightTranslation.RightToLeft;
+                }
+
+                if (leftTranslation != null)
+                {
+                    TranslationIdLeft = leftTranslation.LanguageID;
+                    TranslationTextDirection[2] = leftTranslation.RightToLeft;
+                }
+
+                leftPaper = GetPaper(paperNo, leftTranslation);
+                rightPaper = GetPaper(paperNo, rightTranslation);
+                ShowMessage?.Invoke(leftPaper.ToString());
+                PrintPaper(destinationFolder, paperNo, indexList, leftPaper, rightPaper);
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+            //Process.Start(filePath);
+            //Process.Start("chrome.exe", "--incognito");
+        }
+
+
+
+        public void GeneratBook(string destinationFolder, Translation leftTranslation, Translation rightTranslation)
         {
 
-            List<BookIndex> indexList = ((TranslationEdit)rightTranslation).GetTranslationIndex();
+            if (indexList == null)
+            {
+                indexList = ((TranslationEdit)rightTranslation).GetTranslationIndex();
+            }
 
 
             try

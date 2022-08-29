@@ -19,7 +19,7 @@ namespace UbStandardObjects.Objects
 
         protected const string paragraphAnnotationsFileName = "TranslationParagraphAnnotations";
 
-        private string currentAnnotationsFileNAme = "Annotations";
+        //private string currentAnnotationsFileNAme = "Annotations";
 
 
 
@@ -28,16 +28,12 @@ namespace UbStandardObjects.Objects
         /// </summary>
         protected string ApplicationFolderTubFiles = "";
 
-        /// <summary>
-        /// Folder for generated files by this app
-        /// </summary>
-        protected string LocalStorageFolder = "";
+        private Parameters Param = null;
 
-
-        public GetDataFiles(string appFolder, string localStorageFolder)
+        public GetDataFiles(Parameters param)
         {
-            ApplicationFolderTubFiles = Path.Combine(appFolder, TubFilesFolder);
-            LocalStorageFolder = localStorageFolder;
+            Param = param;
+            ApplicationFolderTubFiles = Path.Combine(Param.ApplicationFolder, TubFilesFolder);
         }
 
         /// <summary>
@@ -88,7 +84,7 @@ namespace UbStandardObjects.Objects
         /// <returns></returns>
         protected string ControlFilePath()
         {
-            return Path.Combine(ApplicationFolderTubFiles, ControlFileName);
+            return Path.Combine(Param.TUB_Files_RepositoryFolder, ControlFileName);
 
         }
 
@@ -99,12 +95,13 @@ namespace UbStandardObjects.Objects
         /// <returns></returns>
         protected string TranslationFilePath(short translationId)
         {
-            return Path.Combine(ApplicationFolderTubFiles, $"TR{translationId:000}.gz");
+            return Path.Combine(Param.TUB_Files_RepositoryFolder, $"TR{translationId:000}.gz");
         }
 
         public string AnnotationsFilePath(TOC_Entry entry)
         {
-            return Path.Combine(LocalStorageFolder, $"{currentAnnotationsFileNAme}-{entry.TranslationId:000}.json");
+            throw new NotImplementedException("Missing program data folder");
+            //return Path.Combine(Param.TUB_Files_RepositoryFolder, $"{currentAnnotationsFileNAme}-{entry.TranslationId:000}.json");
         }
 
 
@@ -115,7 +112,7 @@ namespace UbStandardObjects.Objects
         /// <returns></returns>
         protected string TranslationJsonFilePath(short translationId)
         {
-            return Path.Combine(LocalStorageFolder, $"TR{translationId:000}.json");
+            return Path.Combine(Param.TUB_Files_RepositoryFolder, $"TR{translationId:000}.json");
         }
 
         /// <summary>
@@ -125,12 +122,12 @@ namespace UbStandardObjects.Objects
         /// <returns></returns>
         protected string TranslationAnnotationsJsonFilePath(short translationId)
         {
-            return Path.Combine(LocalStorageFolder, $"{translationAnnotationsFileName}_{translationId:000}.json");
+            return Path.Combine(Param.TUB_Files_RepositoryFolder, $"{translationAnnotationsFileName}_{translationId:000}.json");
         }
 
         protected string ParagraphAnnotationsJsonFilePath(short translationId)
         {
-            return Path.Combine(LocalStorageFolder, $"{paragraphAnnotationsFileName}_{translationId:000}.json");
+            return Path.Combine(Param.TUB_Files_RepositoryFolder, $"{paragraphAnnotationsFileName}_{translationId:000}.json");
         }
 
 
