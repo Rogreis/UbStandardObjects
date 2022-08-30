@@ -100,6 +100,15 @@ namespace UbStandardObjects.Objects
             }
         }
 
+        public string ID
+        {
+            get
+            {
+                return string.Format($"{Paper}:{Section}-{ParagraphNo})");
+            }
+        }
+
+
         [JsonIgnore]
         public string AName
         {

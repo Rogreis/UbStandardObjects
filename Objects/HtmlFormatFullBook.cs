@@ -59,7 +59,7 @@ namespace UbStandardObjects.Objects
             sb.AppendLine("</style>  ");
         }
 
-        protected override string makeDIV(Paragraph p, bool selected = false)
+        protected override string makeDIV(Paragraph p, bool selected = false, bool outputAsLink = false)
         {
             string TextClass = $"class=\"{statusStyleName(p.Status)}\"";
             string textDirection = TextDirection(p);

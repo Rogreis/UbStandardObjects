@@ -38,6 +38,14 @@ namespace UbStandardObjects.Objects
             return GetPaperEdit(paperNo);
         }
 
+        public ParagraphMarkDown GetParagraph(short paperNo, short section, short paragraphNo)
+        {
+            ParagraphMarkDown par = new ParagraphMarkDown(LocalRepositoryFolder, ParagraphMarkDown.FilePath(paperNo, section, paragraphNo));
+            return par;
+        }
+
+
+
         public List<BookIndex> GetTranslationIndex()
         {
             List<BookIndex> list = new List<BookIndex>();

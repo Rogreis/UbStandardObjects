@@ -244,7 +244,7 @@ namespace UbStandardObjects.Objects
         }
 
 
-        protected virtual string makeDIV(Paragraph p, bool selected = false)
+        protected virtual string makeDIV(Paragraph p, bool selected = false, bool outputAsLink= false)
         {
             string TextClass = (selected) ? "class=\"" + statusStyleHighlightedName(p.Status) + "\"" : "class=\"" + statusStyleName(p.Status) + "\"";
             string textDirection = TextDirection(p);
@@ -275,8 +275,15 @@ namespace UbStandardObjects.Objects
                     break;
             }
 
-            string htmlLink = $"<a href=\"about:ident\" ident=\"{p.Identification}\">{openStyle} {p.Text}</a>";
-            // This is a link</a>
+            string htmlLink = "";
+            if (outputAsLink)
+            {
+                htmlLink = $"<a href=\"about:ident\" ident=\"{p.Identification}\">{openStyle} {p.Text}</a>";
+            }
+            else
+            {
+                htmlLink = $"<p>{openStyle} {p.Text}</p>";
+            }
 
             return $"<div id=\"{DivName(p)}\" {textDirection}>{htmlLink}{closeStyle}</div>";
         }
@@ -336,7 +343,7 @@ namespace UbStandardObjects.Objects
                     }
                     if (leftTranslation != null)
                     {
-                        sb.AppendLine("<td width= \"" + percent.ToString("0.00") + "%\" valign=\"top\">" + makeDIV(leftTranslation[i]) + "</td>");
+                        sb.AppendLine("<td width= \"" + percent.ToString("0.00") + "%\" valign=\"top\">" + makeDIV(leftTranslation[i], false, true) + "</td>");
                     }
                     if (showCompare)
                     {

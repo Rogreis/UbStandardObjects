@@ -101,5 +101,37 @@ namespace UbStandardObjects.Objects
             return newText;
         }
 
+        public static string FilePath(short paperNo, short section, short paragraphNo)
+        {
+            return $"Doc_{paperNo:000}\\Par_{paperNo:000}_{section:000}_{paragraphNo:000}.md";
+        }
+
+        public static string FilePath(string ident)
+        {
+            // 120:0-1 (0.0)
+            char[] separators = { ':', '-', ' ' };
+            string[] parts = ident.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+            short paperNo = Convert.ToInt16(parts[0]);
+            short section = Convert.ToInt16(parts[1]);
+            short paragraphNo = Convert.ToInt16(parts[2]);
+            return $"Doc{paperNo:000}\\Par_{paperNo:000}_{section:000}_{paragraphNo:000}.md";
+        }
+
+        public bool Save(string text)
+        {
+            try
+            {
+                Text = text;
+                File.WriteAllText(FullPath, text);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw;
+                //return false;
+            }
+        }
+
+
     }
 }
