@@ -243,6 +243,12 @@ namespace UbStandardObjects.Objects
             return $"divc{p.ParaIdent}";
         }
 
+        /*
+        <td width= "33.33%" valign="top"><div id="divl120001" ><p><h2> The Bestowal of Michael on Urantia</p></h2></div></td>
+        <td width= "33.33%" valign="top"><div id="divl120001" ><p><h2> El otorgamiento de Miguel en Urantia</p></h2></div></td>
+        <td width= "33.33%" valign="top"><div id="divl120000" ><a href="about:ident" ident="120:0-0 (0.0)"><h2> A DOAÇÃO DE MICHAEL EM URÂNTIA</a></h2></div></td>
+         * */
+
 
         protected virtual string makeDIV(Paragraph p, bool selected = false, bool outputAsLink= false)
         {
