@@ -101,9 +101,15 @@ namespace UbStandardObjects.Objects
             return newText;
         }
 
+        public static string FolderPath(short paperNo)
+        {
+            return $"Doc{paperNo:000}";
+        }
+
+
         public static string FilePath(short paperNo, short section, short paragraphNo)
         {
-            return $"Doc_{paperNo:000}\\Par_{paperNo:000}_{section:000}_{paragraphNo:000}.md";
+            return $"{FolderPath(paperNo)}\\Par_{paperNo:000}_{section:000}_{paragraphNo:000}.md";
         }
 
         public static string FilePath(string ident)
