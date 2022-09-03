@@ -85,9 +85,9 @@ namespace UbStandardObjects.Objects
                 }
                 return FormatTableObject;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                StaticObjects.Logger.FatalError($"Missing format table. May be you do not have the correct data to use this tool.");
+                StaticObjects.Logger.Error($"Missing format table. May be you do not have the correct data to use this tool.", ex);
                 return null;
             }
         }
