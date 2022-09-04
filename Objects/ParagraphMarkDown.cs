@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace UbStandardObjects.Objects
@@ -53,13 +55,13 @@ namespace UbStandardObjects.Objects
         {
             RepositoryPath = baseRepositoryPath;
             RelativeFilePath = relativeFilePath;
-            Text= MarkdownToHtml(File.ReadAllText(FullPath));
+            Text = MarkdownToHtml(File.ReadAllText(FullPath));
             char[] sep = { '_' };
             string fileName = Path.GetFileNameWithoutExtension(FullPath).Remove(0, 4);
-            string[] parts= fileName.Split(sep, StringSplitOptions.RemoveEmptyEntries);
-            Paper= Convert.ToInt16(parts[0]);
-            Section = Convert.ToInt16(parts[0]);
-            ParagraphNo = Convert.ToInt16(parts[0]);
+            string[] parts = fileName.Split(sep, StringSplitOptions.RemoveEmptyEntries);
+            Paper = Convert.ToInt16(parts[0]);
+            Section = Convert.ToInt16(parts[1]);
+            ParagraphNo = Convert.ToInt16(parts[2]);
         }
 
         public ParagraphMarkDown(string filePath)
@@ -84,7 +86,7 @@ namespace UbStandardObjects.Objects
         /// <returns></returns>
         private string MarkdownToHtml(string markDownText)
         {
-            int position= 0;
+            int position = 0;
             bool openItalics = true;
 
             string newText = markDownText;
@@ -123,7 +125,7 @@ namespace UbStandardObjects.Objects
             return $"Doc{paperNo:000}\\Par_{paperNo:000}_{section:000}_{paragraphNo:000}.md";
         }
 
-        public bool Save(string text)
+        public bool Save(string text, Note note)
         {
             try
             {
@@ -137,6 +139,53 @@ namespace UbStandardObjects.Objects
                 //return false;
             }
         }
+
+        /// <summary>
+        /// Get the zipped format table json and unzipp it to return
+        /// </summary>
+        /// <returns></returns>
+        public Note GetNotes(string repositoryFolder, short paperNo)
+        {
+            try
+            {
+                string filePath = Path.Combine(repositoryFolder, $@"{ParagraphMarkDown.FolderPath(paperNo)}\Notes.json");
+                string jsonString = File.ReadAllText(filePath);
+                var options = new JsonSerializerOptions
+                {
+                    AllowTrailingCommas = true,
+                    WriteIndented = true,
+                };
+                NotesRoot root = JsonSerializer.Deserialize<NotesRoot>(jsonString, options);
+                if (root != null)
+                {
+                    return root.Notes.ToList().Find(n => n.Paper == paperNo && n.Section == Section && n.Paragraph == ParagraphNo);
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                StaticObjects.Logger.Error("GetNotes", ex);
+                return null;
+            }
+        }
+
+        // ----------------------------------
+        // Classes uded to get data from file
+
+        private class NotesRoot
+        {
+            public Note[] Notes { get; set; }
+        }
+
+        public class Note
+        {
+            public int Paper { get; set; }
+            public int Section { get; set; }
+            public int Paragraph { get; set; }
+            public string TranslatorNote { get; set; }
+            public string Notes { get; set; }
+        }
+
 
 
     }

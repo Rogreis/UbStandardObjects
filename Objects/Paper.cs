@@ -80,6 +80,11 @@ namespace UbStandardObjects.Objects
             return Paragraphs.Find(p => p.Section == entry.Section && p.ParagraphNo == entry.ParagraphNo);
         }
 
+        public void GetNotes()
+        {
+
+        }
+
         public override string ToString()
         {
             return $"Paper {PaperNo}";

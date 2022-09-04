@@ -306,20 +306,24 @@ namespace UbStandardObjects.Objects
         }
 
 
-
-        ///// <summary>
-        ///// Load annotations done for a paper
-        ///// </summary>
-        ///// <param name="jsonString"></param>
-        //public abstract List<UbAnnotationsStoreData> LoadAnnotations(short translationId);
-
-
-        ///// <summary>
-        ///// Store annotations all annotations
-        ///// </summary>
-        ///// <param name="annotations"></param>
-        //public abstract void StoreAnnotations(TOC_Entry entry, List<UbAnnotationsStoreData> annotations);
-
+        /// <summary>
+        /// Get the zipped format table json and unzipp it to return
+        /// </summary>
+        /// <returns></returns>
+        public string GetNotes(short paperNo)
+        {
+            try
+            {
+                string filePath = Path.Combine(Param.EditParagraphsRepositoryFolder, $@"{ParagraphMarkDown.FolderPath(paperNo)}\Notes.json");
+                string jsonString= File.ReadAllText(filePath);
+                return "";
+            }
+            catch (Exception ex)
+            {
+                StaticObjects.Logger.Error("GetFormatTable", ex);
+                return null;
+            }
+        }
 
     }
 
