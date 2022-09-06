@@ -108,6 +108,11 @@ namespace UbStandardObjects
 		public string ApplicationFolder { get; set; } = "";
 
         /// <summary>
+		/// Source of TUB Files used only by UbStudyHelp
+		/// </summary>
+		public string UbStudyHelpTubFilesSourcePath = "";
+
+        /// <summary>
         /// Git associated repository folder
         /// </summary>
         public string TUB_Files_RepositoryFolder { get; set; } = "";

@@ -28,13 +28,63 @@ namespace UbStandardObjects.Objects
         /// </summary>
         protected string ApplicationFolderTubFiles = "";
 
-        private Parameters Param = null;
+        protected Parameters Param = null;
 
         public GetDataFiles(Parameters param)
         {
             Param = param;
             ApplicationFolderTubFiles = Path.Combine(Param.ApplicationFolder, TubFilesFolder);
         }
+
+        #region File path creation
+        /// <summary>
+        /// Generates the control file full path
+        /// </summary>
+        /// <returns></returns>
+        protected virtual string ControlFilePath()
+        {
+            return Path.Combine(Param.TUB_Files_RepositoryFolder, ControlFileName);
+
+        }
+
+        /// <summary>
+        /// Generates the translation full path
+        /// </summary>
+        /// <param name="translationId"></param>
+        /// <returns></returns>
+        protected virtual string TranslationFilePath(short translationId)
+        {
+            return Path.Combine(Param.TUB_Files_RepositoryFolder, $"TR{translationId:000}.gz");
+        }
+
+
+        /// <summary>
+        /// Generates the translation full path
+        /// </summary>
+        /// <param name="translationId"></param>
+        /// <returns></returns>
+        protected virtual string TranslationJsonFilePath(short translationId)
+        {
+            return Path.Combine(Param.TUB_Files_RepositoryFolder, $"TR{translationId:000}.json");
+        }
+
+        /// <summary>
+        /// Generates the translation full path
+        /// </summary>
+        /// <param name="translationId"></param>
+        /// <returns></returns>
+        protected virtual string TranslationAnnotationsJsonFilePath(short translationId)
+        {
+            return Path.Combine(Param.TUB_Files_RepositoryFolder, $"{translationAnnotationsFileName}_{translationId:000}.json");
+        }
+
+        protected virtual string ParagraphAnnotationsJsonFilePath(short translationId)
+        {
+            return Path.Combine(Param.TUB_Files_RepositoryFolder, $"{paragraphAnnotationsFileName}_{translationId:000}.json");
+        }
+
+        #endregion
+
 
         /// <summary>
         /// Get all papers from the zipped file
@@ -76,59 +126,6 @@ namespace UbStandardObjects.Objects
             }
         }
 
-
-
-        /// <summary>
-        /// Generates the control file full path
-        /// </summary>
-        /// <returns></returns>
-        protected string ControlFilePath()
-        {
-            return Path.Combine(Param.TUB_Files_RepositoryFolder, ControlFileName);
-
-        }
-
-        /// <summary>
-        /// Generates the translation full path
-        /// </summary>
-        /// <param name="translationId"></param>
-        /// <returns></returns>
-        protected string TranslationFilePath(short translationId)
-        {
-            return Path.Combine(Param.TUB_Files_RepositoryFolder, $"TR{translationId:000}.gz");
-        }
-
-        public string AnnotationsFilePath(TOC_Entry entry)
-        {
-            throw new NotImplementedException("Missing program data folder");
-            //return Path.Combine(Param.TUB_Files_RepositoryFolder, $"{currentAnnotationsFileNAme}-{entry.TranslationId:000}.json");
-        }
-
-
-        /// <summary>
-        /// Generates the translation full path
-        /// </summary>
-        /// <param name="translationId"></param>
-        /// <returns></returns>
-        protected string TranslationJsonFilePath(short translationId)
-        {
-            return Path.Combine(Param.TUB_Files_RepositoryFolder, $"TR{translationId:000}.json");
-        }
-
-        /// <summary>
-        /// Generates the translation full path
-        /// </summary>
-        /// <param name="translationId"></param>
-        /// <returns></returns>
-        protected string TranslationAnnotationsJsonFilePath(short translationId)
-        {
-            return Path.Combine(Param.TUB_Files_RepositoryFolder, $"{translationAnnotationsFileName}_{translationId:000}.json");
-        }
-
-        protected string ParagraphAnnotationsJsonFilePath(short translationId)
-        {
-            return Path.Combine(Param.TUB_Files_RepositoryFolder, $"{paragraphAnnotationsFileName}_{translationId:000}.json");
-        }
 
 
         /// <summary>
