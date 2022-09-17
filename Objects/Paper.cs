@@ -75,7 +75,7 @@ namespace UbStandardObjects.Objects
         }
 
 
-        public Paragraph GetParagraph(TOC_Entry entry)
+        public virtual Paragraph GetParagraph(TOC_Entry entry)
         {
             return Paragraphs.Find(p => p.Section == entry.Section && p.ParagraphNo == entry.ParagraphNo);
         }

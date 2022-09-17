@@ -10,6 +10,7 @@ namespace UbStandardObjects.Objects
         {
         }
 
+
         /// <summary>
         /// Create the styles for the page
         /// </summary>
@@ -28,7 +29,7 @@ namespace UbStandardObjects.Objects
             sb.AppendLine("    border: 0px solid #CCC;  ");
             sb.AppendLine("    border-collapse: collapse;  ");
             sb.AppendLine("}  ");
-            sb.AppendLine($"td   {{font-family: {Param.FontFamily}; padding: 10px; font-size: {size + 4}px; color: #000000; text-align: left; font-style: none; text-transform: none; font-weight: none; border: none;}}");
+            sb.AppendLine($"td   {{font-family: {Param.FontFamily}; padding: 0px; font-size: {size}px; text-align: left; font-style: none; text-transform: none; font-weight: none; border: none;}}");
 
             // Sup
             sb.AppendLine($"sup  {{font-size: {size - 1}px;  color: #666666;}}");
@@ -47,6 +48,9 @@ namespace UbStandardObjects.Objects
             paragraphStyle(sb, ParagraphStatus.Closed);
 
             ItalicBoldStyles(sb);
+            sb.AppendLine("  ");
+            // Links
+            LinkStyles(sb);
             sb.AppendLine("  ");
 
 

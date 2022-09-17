@@ -4,6 +4,7 @@ using System.Data;
 using System.IO;
 using System.Text;
 using System.Text.Json;
+using static System.Collections.Specialized.BitVector32;
 using File = System.IO.File;
 
 namespace UbStandardObjects.Objects
@@ -12,6 +13,7 @@ namespace UbStandardObjects.Objects
     {
 
         private string LocalRepositoryFolder = null;
+        private string TocTableFileName = "TOC_Table.json";
 
         public TranslationEdit(string localRepositoryFolder)
         {
@@ -50,6 +52,7 @@ namespace UbStandardObjects.Objects
         {
             char[] separators = { '_' };
             string fileName = Path.GetFileNameWithoutExtension(fileNamePath);
+
             string[] parts = fileName.Split(separators, StringSplitOptions.RemoveEmptyEntries);
             short paperNo = Convert.ToInt16(parts[1]);
             short sectionNo = Convert.ToInt16(parts[2]);
@@ -62,7 +65,10 @@ namespace UbStandardObjects.Objects
             return new TUB_TOC_Entry()
             {
                 Text = paperNoParam > 0 ? paperNoParam.ToString() + " - " + text : text,
-                Url = $@"Doc{paperNo:000}\Par_{paperNo:000}_{sectionNo:000}_{paragraphNo:000}.md"
+                PaperNo= paperNo,
+                SectionNo = sectionNo,
+                ParagraphNo = paperNo,
+                Expanded= sectionNo == 0
             };
         }
 
@@ -70,7 +76,8 @@ namespace UbStandardObjects.Objects
         {
             return new TUB_TOC_Entry()
             {
-                Text = text
+                Text = text,
+                Expanded = true
             };
         }
 
@@ -78,9 +85,9 @@ namespace UbStandardObjects.Objects
         /// Create an object with all the index entry for the editing translation
         /// </summary>
         /// <returns></returns>
-        public List<TUB_TOC_Entry> GetTranslationIndex()
+        public List<TUB_TOC_Entry> GetTranslationIndex(bool forceGeneration= false)
         {
-            string indexJsonFilePath = Path.Combine(LocalRepositoryFolder, "index.json");
+            string indexJsonFilePath = Path.Combine(LocalRepositoryFolder, TocTableFileName);
             var options = new JsonSerializerOptions
             {
                 AllowTrailingCommas = true,
@@ -88,7 +95,7 @@ namespace UbStandardObjects.Objects
                 IncludeFields = true
             };
 
-            if (File.Exists(indexJsonFilePath))
+            if (File.Exists(indexJsonFilePath) && !forceGeneration)
             {
                 string json = File.ReadAllText(indexJsonFilePath);
                 //var data= JsonSerializer.Deserialize(json, options);
@@ -155,6 +162,8 @@ namespace UbStandardObjects.Objects
             // Serialize the index
             string jsonString = JsonSerializer.Serialize<List<TUB_TOC_Entry>>(list, options);
             File.WriteAllText(indexJsonFilePath, jsonString);
+            File.WriteAllText(Path.Combine(StaticObjects.Parameters.TUB_Files_RepositoryFolder, TocTableFileName), jsonString);
+            File.WriteAllText(Path.Combine(StaticObjects.Parameters.EditBookRepositoryFolder, TocTableFileName), jsonString);
 
             return list;
         }

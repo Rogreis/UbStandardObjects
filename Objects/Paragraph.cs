@@ -146,6 +146,9 @@ namespace UbStandardObjects.Objects
         }
 
 
+        [JsonIgnore]
+        public bool IsEditTranslation { get; set; } = false;
+
 
         public Paragraph()
         {
@@ -155,6 +158,15 @@ namespace UbStandardObjects.Objects
         public Paragraph(short translationId)
         {
             TranslationId = translationId;
+        }
+
+        // Add this if using nested MemberwiseClone.
+        // This is a class, which is a reference type, so cloning is more difficult.
+        public Paragraph DeepCopy()
+        {
+            // Clone the root ...
+            Paragraph other = (Paragraph)this.MemberwiseClone();
+            return other;
         }
 
         public override string ToString()

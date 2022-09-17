@@ -283,7 +283,7 @@ namespace UbStandardObjects.Objects
         {
             try
             {
-                string formatTableZippedPath = Path.Combine(ApplicationFolderTubFiles, @"FormatTable.gz");
+                string formatTableZippedPath = Path.Combine(Param.TUB_Files_RepositoryFolder, @"FormatTable.gz");
 
                 if (!File.Exists(formatTableZippedPath))
                 {

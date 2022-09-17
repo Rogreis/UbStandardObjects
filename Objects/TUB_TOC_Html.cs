@@ -10,18 +10,14 @@ namespace UbStandardObjects.Objects
     /// </summary>
     public class TUB_TOC_Entry
     {
-        [JsonPropertyName("id")]
-        public string Id { get; set; }
-
         [JsonPropertyName("text")]
         public string Text { get; set; } = "";
 
-        public string icon { get; set; }
+        public short PaperNo { get; set; } = -1;
 
-        public string _class { get; set; }
+        public short SectionNo { get; set; } = -1;
 
-        [JsonPropertyName("href")]
-        public string Url { get; set; }
+        public short ParagraphNo { get; set; } = -1;
 
         [JsonPropertyName("expanded")]
         public bool Expanded { get; set; }
@@ -41,75 +37,46 @@ namespace UbStandardObjects.Objects
     /// </summary>
     public class TUB_TOC_Html
     {
+        private string classesForUlElement = "nested";
+        private string ExpandableLi = "caret expandable";
+        private string NonExpandableLi = "caret";
+
         private List<TUB_TOC_Entry> TocEntries = null;
 
-        public TUB_TOC_Html(List<TUB_TOC_Entry> toc_entries)
+        HtmlFormatParameters Param = null;
+
+        public TUB_TOC_Html(HtmlFormatParameters param, List<TUB_TOC_Entry> toc_entries)
         {
             TocEntries= toc_entries;
+            Param = param;
         }
+
 
         private void HtmlNodes(StringBuilder sb, List<TUB_TOC_Entry> tocEntries, string ident)
         {
-            sb.AppendLine($"{ident}<ul class=\"nested\"> ");
+            sb.AppendLine($"{ident}<ul class=\"{classesForUlElement}\"> ");
             foreach (TUB_TOC_Entry entry in tocEntries)
             {
+                // Doc001\\Par_001_001_000.md
+                // file:///C:/Trabalho/Github/Rogerio/Ub/TUB_PT_BR/Doc001.html
+                string classes = entry.SectionNo == 0 ? NonExpandableLi : ExpandableLi; 
                 bool hasNodes = entry.Nodes != null && entry.Nodes.Count > 0;
                 if (hasNodes)
                 {
-                    sb.AppendLine($"{ident}   <li><span class=\"caret\"><a href=\"{entry.Url}\">{entry.Text}</a></span> ");
+                    string href = $@"Doc{entry.PaperNo:000}.html";
+                    sb.AppendLine($"{ident}   <li><span class=\"{classes} {Param.FontStyleClass}\"><a href=\"{href}\">{entry.Text}</a></span> ");
                     HtmlNodes(sb, entry.Nodes, ident + "   ");
                 }
                 else
                 {
-                    sb.AppendLine($"{ident}   <li><a href=\"{entry.Url}\">{entry.Text}</a> ");
+                    string href = $@"Doc{entry.PaperNo:000}.html#p{entry.PaperNo:000}_{entry.SectionNo:000}_000";
+                    sb.AppendLine($"{ident}   <li class=\"{Param.FontStyleClass}\"><a href=\"{href}\">{entry.Text}</a> ");
                 }
                 sb.AppendLine($"{ident}   </li> ");
             }
             sb.AppendLine($"{ident}</ul> ");
         }
 
-        public void Style(StringBuilder sb)
-        {
-            sb.AppendLine("<style> ");
-            sb.AppendLine("ul, #myUL { ");
-            sb.AppendLine("  list-style-type: none; ");
-            sb.AppendLine("} ");
-            sb.AppendLine(" ");
-            sb.AppendLine("#myUL { ");
-            sb.AppendLine("  margin: 0; ");
-            sb.AppendLine("  padding: 0; ");
-            sb.AppendLine("} ");
-            sb.AppendLine(" ");
-            sb.AppendLine(".caret { ");
-            sb.AppendLine("  cursor: pointer; ");
-            sb.AppendLine("  -webkit-user-select: none; /* Safari 3.1+ */ ");
-            sb.AppendLine("  -moz-user-select: none; /* Firefox 2+ */ ");
-            sb.AppendLine("  -ms-user-select: none; /* IE 10+ */ ");
-            sb.AppendLine("  user-select: none; ");
-            sb.AppendLine("} ");
-            sb.AppendLine(" ");
-            sb.AppendLine(".caret::before { ");
-            sb.AppendLine("  content: \"\\25B6\"; ");
-            sb.AppendLine("  color: black; ");
-            sb.AppendLine("  display: inline-block; ");
-            sb.AppendLine("  margin-right: 6px; ");
-            sb.AppendLine("} ");
-            sb.AppendLine(" ");
-            sb.AppendLine(".caret-down::before { ");
-            sb.AppendLine("  -ms-transform: rotate(90deg); /* IE 9 */ ");
-            sb.AppendLine("  -webkit-transform: rotate(90deg); /* Safari */' ");
-            sb.AppendLine("  transform: rotate(90deg);   ");
-            sb.AppendLine("} ");
-            sb.AppendLine(" ");
-            sb.AppendLine(".nested { ");
-            sb.AppendLine("  display: none; ");
-            sb.AppendLine("} ");
-            sb.AppendLine(" ");
-            sb.AppendLine(".active { ");
-            sb.AppendLine("  display: block; ");
-            sb.AppendLine("} ");
-            sb.AppendLine("</style> ");
-        }
 
         /// <summary>
         /// 
@@ -117,17 +84,52 @@ namespace UbStandardObjects.Objects
         /// <param name="sb"></param>
         public void JavaScript(StringBuilder sb)
         {
+
             sb.AppendLine("<script> ");
-            sb.AppendLine("var toggler = document.getElementsByClassName(\"caret\"); ");
-            sb.AppendLine("var i; ");
+            sb.AppendLine("  var toggler = document.getElementsByClassName(\"caret\"); ");
+            sb.AppendLine("  var expandables = document.getElementsByClassName(\"expandable\"); ");
+            sb.AppendLine("  var i; ");
             sb.AppendLine(" ");
-            sb.AppendLine("for (i = 0; i < toggler.length; i++) { ");
-            sb.AppendLine("  toggler[i].addEventListener(\"click\", function() { ");
-            sb.AppendLine("    this.parentElement.querySelector(\".nested\").classList.toggle(\"active\"); ");
-            sb.AppendLine("    this.classList.toggle(\"caret-down\"); ");
-            sb.AppendLine("  }); ");
+            sb.AppendLine("  for (i = 0; i < expandables.length; i++) { ");
+            sb.AppendLine("      expandables[i].parentElement.querySelector(\".nested\").classList.toggle(\"active\"); ");
+            sb.AppendLine("      expandables[i].classList.toggle(\"caret-down\"); ");
             sb.AppendLine("} ");
+            sb.AppendLine("  for (i = 0; i < toggler.length; i++) { ");
+            sb.AppendLine("    toggler[i].addEventListener(\"click\", function() { ");
+            sb.AppendLine("      this.parentElement.querySelector(\".nested\").classList.toggle(\"active\"); ");
+            sb.AppendLine("      this.classList.toggle(\"caret-down\"); ");
+            sb.AppendLine("    }); ");
+            sb.AppendLine("  } ");
             sb.AppendLine("</script> ");
+
+            //sb.AppendLine("<script> ");
+            //sb.AppendLine("  var toggler = document.getElementsByClassName(\"caret\"); ");
+            //sb.AppendLine("  var i; ");
+            //sb.AppendLine(" ");
+            //sb.AppendLine("  for (i = 0; i < toggler.length; i++) { ");
+            //sb.AppendLine("      toggler[i].parentElement.querySelector(\".nested\").classList.toggle(\"active\"); ");
+            //sb.AppendLine("      toggler[i].classList.toggle(\"caret-down\"); ");
+            //sb.AppendLine("} ");
+            //sb.AppendLine("  for (i = 0; i < toggler.length; i++) { ");
+            //sb.AppendLine("    toggler[i].addEventListener(\"click\", function() { ");
+            //sb.AppendLine("      this.parentElement.querySelector(\".nested\").classList.toggle(\"active\"); ");
+            //sb.AppendLine("      this.classList.toggle(\"caret-down\"); ");
+            //sb.AppendLine("    }); ");
+            //sb.AppendLine("  } ");
+            //sb.AppendLine("</script> ");
+
+
+            //sb.AppendLine("<script> ");
+            //sb.AppendLine("var toggler = document.getElementsByClassName(\"caret\"); ");
+            //sb.AppendLine("var i; ");
+            //sb.AppendLine(" ");
+            //sb.AppendLine("for (i = 0; i < toggler.length; i++) { ");
+            //sb.AppendLine("  toggler[i].addEventListener(\"click\", function() { ");
+            //sb.AppendLine("    this.parentElement.querySelector(\".nested\").classList.toggle(\"active\"); ");
+            //sb.AppendLine("    this.classList.toggle(\"caret-down\"); ");
+            //sb.AppendLine("  }); ");
+            //sb.AppendLine("} ");
+            //sb.AppendLine("</script> ");
         }
 
         public void Html(StringBuilder sb)
@@ -137,7 +139,7 @@ namespace UbStandardObjects.Objects
             foreach (TUB_TOC_Entry entry in TocEntries)
             {
                 // <span class="caret">Beverages</span>
-                sb.AppendLine($"{ident}   <li><span class=\"caret\">{entry.Text}</span> ");
+                sb.AppendLine($"{ident}   <li><span class=\"{ExpandableLi} {Param.FontStyleClass}\">{entry.Text}</span> ");
                 if (entry.Nodes != null && entry.Nodes.Count > 0)
                 {
                     HtmlNodes(sb, entry.Nodes, ident + "   ");

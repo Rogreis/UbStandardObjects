@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using UbStandardObjects.Objects;
 using UBT_WebSite.Classes;
@@ -35,6 +36,8 @@ namespace UbStandardObjects.Objects
         }
 
         #region Styles
+
+        //  text-white
 
         protected void paragraphStyle(StringBuilder sb, ParagraphStatus ParagraphStatus)
         {
@@ -88,6 +91,34 @@ namespace UbStandardObjects.Objects
             sb.AppendLine("}");
         }
 
+        protected void LinkStyles(StringBuilder sb)
+        {
+            sb.AppendLine("a:link { ");
+            sb.AppendLine($"  color: {(Param.IsDarkTheme ? Param.LightText : Param.DarkText)}; ");
+            sb.AppendLine("  background-color: transparent; ");
+            sb.AppendLine("  text-decoration: none; ");
+            sb.AppendLine("} ");
+            sb.AppendLine(" ");
+            sb.AppendLine("a:visited { ");
+            sb.AppendLine($"  color: {(Param.IsDarkTheme ? Param.LightText : Param.DarkText)}; ");
+            sb.AppendLine("  background-color: transparent; ");
+            sb.AppendLine("  text-decoration: none; ");
+            sb.AppendLine("} ");
+            sb.AppendLine(" ");
+            sb.AppendLine("a:hover { ");
+            sb.AppendLine($"  color: {(Param.IsDarkTheme ? Param.LightTextGray : Param.DarkTextGray)}; ");
+            sb.AppendLine("  background-color: transparent; ");
+            sb.AppendLine("  text-decoration: underline; ");
+            sb.AppendLine("} ");
+            sb.AppendLine(" ");
+            sb.AppendLine("a:active { ");
+            sb.AppendLine($"  color: {(Param.IsDarkTheme ? Param.LightTextHighlihted : Param.DarkTextHighlihted)}; ");
+            sb.AppendLine("  background-color: transparent; ");
+            sb.AppendLine("  text-decoration: none; ");
+            sb.AppendLine("} ");
+        }
+
+
         /// <summary>
         /// Create the styles for the page
         /// </summary>
@@ -107,8 +138,8 @@ namespace UbStandardObjects.Objects
             sb.AppendLine("    border-collapse: collapse;  ");
             sb.AppendLine("}  ");
 
-            sb.AppendLine($"td   {{font-family: {Param.FontFamily}; padding: 10px; font-size: {size + 4}px; color: #000000; text-align: left; font-style: none; text-transform: none; font-weight: none; border: none;}}");
-
+            sb.AppendLine($"td   {{font-family: {Param.FontFamily}; padding: 0px; font-size: {size}px; text-align: left; font-style: none; text-transform: none; font-weight: none; border: none;}}");
+            // 
             // Sup
             sb.AppendLine($"sup  {{font-size: {size - 1}px;  color: #666666;}}");
 
@@ -129,34 +160,7 @@ namespace UbStandardObjects.Objects
             sb.AppendLine("  ");
 
             // Links
-            sb.AppendLine(" ");
-            sb.AppendLine("/* unvisited link */ ");
-            sb.AppendLine("a:link { ");
-            sb.AppendLine("  color: black; ");
-            sb.AppendLine("  text-decoration: none; ");
-            sb.AppendLine(" } ");
-            sb.AppendLine(" ");
-            sb.AppendLine("/* visited link */ ");
-            sb.AppendLine("a:visited { ");
-            sb.AppendLine("  color: gray; ");
-            sb.AppendLine("  text-decoration: none; ");
-            sb.AppendLine("} ");
-            sb.AppendLine(" ");
-            sb.AppendLine("/* mouse over link */ ");
-
-            //sb.AppendLine("a:hover { ");
-            ////sb.AppendLine("  color: blue; ");
-            ////sb.AppendLine("  text-decoration: none; ");
-            //sb.AppendLine("  font-weight: bold; ");
-            //sb.AppendLine("} ");
-            //sb.AppendLine(" ");
-            //sb.AppendLine("/* selected link */ ");
-
-            //sb.AppendLine("a:active { ");
-            //sb.AppendLine("  color: blue; ");
-            //sb.AppendLine("  text-decoration: none; ");
-            ////sb.AppendLine("  font-weight: bold; ");
-            //sb.AppendLine("} ");
+            LinkStyles(sb);
 
             sb.AppendLine(" ");
 
@@ -169,9 +173,26 @@ namespace UbStandardObjects.Objects
             sb.AppendLine("</style>  ");
         }
 
+
+
         protected virtual string statusBackgroundColor(ParagraphStatus ParagraphStatus)
         {
-            return Param.statusBackgroundColor(ParagraphStatus);
+            //switch (ParagraphStatus)
+            //{
+            //    case ParagraphStatus.Started:
+            //        return System.Drawing.ColorTranslator.ToHtml(BackgroundStarted).Trim();
+            //    case ParagraphStatus.Working:
+            //        return System.Drawing.ColorTranslator.ToHtml(BackgroundWorking).Trim();
+            //    case ParagraphStatus.Doubt:
+            //        return System.Drawing.ColorTranslator.ToHtml(BackgroundDoubt).Trim();
+            //    case ParagraphStatus.Ok:
+            //        return System.Drawing.ColorTranslator.ToHtml(BackgroundOk).Trim();
+            //    case ParagraphStatus.Closed:
+            //        return System.Drawing.ColorTranslator.ToHtml(BackgroundClosed).Trim();
+            //}
+            //return System.Drawing.ColorTranslator.ToHtml(BackgroundStarted).Trim();
+            throw new Exception("Rever HtmlFormat.statusBackgroundColor");
+            //return "";
         }
 
         protected string statusStyleName(ParagraphStatus ParagraphStatus)
@@ -373,14 +394,7 @@ namespace UbStandardObjects.Objects
 
         protected Paper GetPaper(short paperNo, Translation translation)
         {
-            if (translation is TranslationEdit)
-            {
-                return ((TranslationEdit)translation).Paper(paperNo);
-            }
-            else
-            {
-                return translation.Papers[paperNo]; ;
-            }
+            return translation.Papers[paperNo];
         }
 
         /// <summary>
