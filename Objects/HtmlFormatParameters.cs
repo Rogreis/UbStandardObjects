@@ -25,8 +25,6 @@ namespace UbStandardObjects.Objects
 
         public float FontSize { get; set; } = 14;
 
-        public string FontStyleClass = "userfont";
-
         public string FontFamily { get; set; } = "Verdana,Arial,Helvetica";
 
         public bool IsDarkTheme { get; set; } = true;  
@@ -139,35 +137,18 @@ namespace UbStandardObjects.Objects
                 switch (p.Status)
                 {
                     case ParagraphStatus.Started:
-                        return "p-3 mb-2 ParagraphStarted";
+                        return "parStarted";
                     case ParagraphStatus.Working:
-                        return "p-3 mb-2 ParagraphWorking";
+                        return "parWorking";
                     case ParagraphStatus.Doubt:
-                        return "p-3 mb-2 ParagraphDoubt";
+                        return "parDoubt";
                     case ParagraphStatus.Ok:
-                        return "p-3 mb-2 ParagraphOk";
+                        return "parOk";
                     case ParagraphStatus.Closed:
-                        return IsDarkTheme ? ClassParagraphDarkTheme : ClassParagraphLightTheme;
+                        return "parClosed";
                 }
             }
-            else
-            {
-                return IsDarkTheme ? ClassParagraphDarkTheme : ClassParagraphLightTheme;
-            }
-            return ClassParagraphDarkTheme;
+            return "parClosed";
         }
-
-
-        //public Font CreateFont()
-        //{
-        //    FontFamily fontFamily = new FontFamily(FontFamily);
-        //    Font font = new Font(
-        //        fontFamily,
-        //        FontSize,
-        //        FontStyle.Regular,
-        //        GraphicsUnit.Pixel);
-        //    return font;
-        //}
-
     }
 }

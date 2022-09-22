@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -51,26 +52,32 @@ namespace UbStandardObjects.Objects
             Param = param;
         }
 
+        private string Href(short paperNo)
+        {
+            return $@"javascript:loadDoc('content/Doc{paperNo:000}.html', null)";
+        }
+
+        private string Href(TUB_TOC_Entry entry)
+        {
+            return $@"javascript:loadDoc('content/Doc{entry.PaperNo:000}.html','p{entry.PaperNo:000}_{entry.SectionNo:000}_000')";
+        }
 
         private void HtmlNodes(StringBuilder sb, List<TUB_TOC_Entry> tocEntries, string ident)
         {
             sb.AppendLine($"{ident}<ul class=\"{classesForUlElement}\"> ");
             foreach (TUB_TOC_Entry entry in tocEntries)
             {
-                // Doc001\\Par_001_001_000.md
-                // file:///C:/Trabalho/Github/Rogerio/Ub/TUB_PT_BR/Doc001.html
                 string classes = entry.SectionNo == 0 ? NonExpandableLi : ExpandableLi; 
                 bool hasNodes = entry.Nodes != null && entry.Nodes.Count > 0;
                 if (hasNodes)
                 {
-                    string href = $@"Doc{entry.PaperNo:000}.html";
-                    sb.AppendLine($"{ident}   <li><span class=\"{classes} {Param.FontStyleClass}\"><a href=\"{href}\">{entry.Text}</a></span> ");
+                    // <li><a class="parClosed" href="javascript:loadDoc('content/Doc000.html','p000_001_000')">I. Deidade e Divindade</a> 
+                    sb.AppendLine($"{ident}    <li><span class=\"{classes} \"><a class=\"liIndex\" href=\"{Href(entry.PaperNo)}\">{entry.Text}</a></span> ");
                     HtmlNodes(sb, entry.Nodes, ident + "   ");
                 }
                 else
                 {
-                    string href = $@"Doc{entry.PaperNo:000}.html#p{entry.PaperNo:000}_{entry.SectionNo:000}_000";
-                    sb.AppendLine($"{ident}   <li class=\"{Param.FontStyleClass}\"><a href=\"{href}\">{entry.Text}</a> ");
+                    sb.AppendLine($"{ident}   <li><a class=\"liIndex\" href=\"{Href(entry)}\">{entry.Text}</a> ");
                 }
                 sb.AppendLine($"{ident}   </li> ");
             }
@@ -132,14 +139,15 @@ namespace UbStandardObjects.Objects
             //sb.AppendLine("</script> ");
         }
 
-        public void Html(StringBuilder sb)
+        public void Html(string pathTocTable)
         {
+            StringBuilder sb = new StringBuilder();
             sb.AppendLine("<ul id=\"myUL\"> ");
             string ident = "";
             foreach (TUB_TOC_Entry entry in TocEntries)
             {
                 // <span class="caret">Beverages</span>
-                sb.AppendLine($"{ident}   <li><span class=\"{ExpandableLi} {Param.FontStyleClass}\">{entry.Text}</span> ");
+                sb.AppendLine($"{ident}   <li><span class=\"{ExpandableLi} \">{entry.Text}</span> ");
                 if (entry.Nodes != null && entry.Nodes.Count > 0)
                 {
                     HtmlNodes(sb, entry.Nodes, ident + "   ");
@@ -149,6 +157,8 @@ namespace UbStandardObjects.Objects
            
             sb.AppendLine("</ul> ");
             sb.AppendLine(" ");
+            string html = sb.ToString();
+            File.WriteAllText(pathTocTable, html);
         }
     }
 

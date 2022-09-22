@@ -87,13 +87,15 @@ namespace UbStandardObjects.Objects
         /// <returns></returns>
         public List<TUB_TOC_Entry> GetTranslationIndex(bool forceGeneration= false)
         {
-            string indexJsonFilePath = Path.Combine(LocalRepositoryFolder, TocTableFileName);
+            string indexJsonFilePath = Path.Combine(StaticObjects.Parameters.EditBookRepositoryFolder, TocTableFileName);
             var options = new JsonSerializerOptions
             {
                 AllowTrailingCommas = true,
                 WriteIndented = true,
                 IncludeFields = true
             };
+
+            indexJsonFilePath = Path.Combine(StaticObjects.Parameters.EditBookRepositoryFolder, TocTableFileName);
 
             if (File.Exists(indexJsonFilePath) && !forceGeneration)
             {
@@ -159,11 +161,11 @@ namespace UbStandardObjects.Objects
                 };
             }
 
-            // Serialize the index
-            string jsonString = JsonSerializer.Serialize<List<TUB_TOC_Entry>>(list, options);
-            File.WriteAllText(indexJsonFilePath, jsonString);
-            File.WriteAllText(Path.Combine(StaticObjects.Parameters.TUB_Files_RepositoryFolder, TocTableFileName), jsonString);
-            File.WriteAllText(Path.Combine(StaticObjects.Parameters.EditBookRepositoryFolder, TocTableFileName), jsonString);
+            //// Serialize the index
+            //string jsonString = JsonSerializer.Serialize<List<TUB_TOC_Entry>>(list, options);
+            //File.WriteAllText(indexJsonFilePath, jsonString);
+            ////File.WriteAllText(Path.Combine(StaticObjects.Parameters.TUB_Files_RepositoryFolder, TocTableFileName), jsonString);
+            ////File.WriteAllText(Path.Combine(StaticObjects.Parameters.EditBookRepositoryFolder, TocTableFileName), jsonString);
 
             return list;
         }

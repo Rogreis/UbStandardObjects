@@ -28,7 +28,7 @@ namespace UbStandardObjects.Objects
         private string IdentLink(Paragraph p)
         {
             string href = $"https://github.com/Rogreis/PtAlternative/blob/correcoes/Doc{p.Paper:000}/Par_{p.Paper:000}_{p.Section:000}_{p.ParagraphNo:000}.md";
-            return $"<a href=\"{href}\">{p.Identification}</a>";
+            return $"<a href=\"{href}\" class=\"{Param.ParagraphClass(p)}\">{p.Identification}</a>";
         }
 
         private void PageStart(StringBuilder sb, TUB_TOC_Html toc_table, short paperNo)
@@ -151,54 +151,135 @@ namespace UbStandardObjects.Objects
         //    sb.AppendLine("</ul> ");
         //}
 
-        protected string textClass(Paragraph p= null)
-        {
-            return $" class=\"{Param.ParagraphClass(p)} {Param.FontStyleClass}\"";
-        }
 
 
-        protected void MakeColumn(StringBuilder sb, Paragraph p, bool useLink, bool useAnchor)
+
+
+        private string PrintText(Paragraph p, bool useLink, bool useAnchor)
         {
-            string textDirection = TextDirection(p);
             string identification = useLink ? IdentLink(p) : p.Identification;
-            string anchor = useAnchor ? $"<a name=\"p{p.Paper:000}_{p.Section:000}_{p.ParagraphNo:000}\"/>" : "";
-
-            // Define div name
-            string openStyle = "", closeStyle = "";
+            string anchor = useAnchor ? $"<a name=\"p{p.Paper:000}_{p.Section:000}_{p.ParagraphNo:000}\"/>  " : "";
             switch (p.Format)
             {
                 case ParagraphHtmlType.BookTitle:
-                    openStyle = $"<h1 {textClass(p)}>";
-                    closeStyle = "</h1>";
-                    break;
+                    return $"<h1>{anchor}{p.Text}</h1>";
                 case ParagraphHtmlType.PaperTitle:
-                    openStyle = $"{anchor}<h2 {textClass(p)}>";
-                    closeStyle = "</h2>";
-                    break;
+                    return $"<h2>{anchor}{p.Text}</h2>";
                 case ParagraphHtmlType.SectionTitle:
-                    openStyle = $"{anchor}<h3 {textClass(p)}>";
-                    closeStyle = "</h3>";
-                    break;
+                    return $"<h3>{anchor}{p.Text}</h3>";
                 case ParagraphHtmlType.NormalParagraph:
-                    openStyle = $"<p {textClass(p)}>{identification}";
-                    closeStyle = "</p>";
-                    break;
+                    return $"{identification}  {p.Text}";
                 case ParagraphHtmlType.IdentedParagraph:
-                    openStyle = $"<p {textClass(p)}><bloquote>{identification}";
-                    closeStyle = "</bloquote></p>";
-                    break;
+                    return $"<bloquote>{identification}  {p.Text}</bloquote>";
             }
-            string htmlLink = $"{openStyle} {p.Text}";
-            sb.AppendLine($"        <td {textDirection}\">{anchor}{htmlLink}{closeStyle}</td> ");
+            return "";
+        }
+
+
+        protected void MakeColumn(StringBuilder sb, Paragraph p)
+        {
+            string textDirection = TextDirection(p);
+            sb.AppendLine($"   <td{textDirection}>");
+            sb.AppendLine($"      <div class=\"p-3 mb-2 parClosed\">");
+            sb.AppendLine($"          {PrintText(p, false, false)}");
+            sb.AppendLine($"      <div>");
+            sb.AppendLine($"   </td>");
+        }
+
+
+
+        protected void MakeColumnWithDiv(StringBuilder sb, Paragraph p)
+        {
+            string textDirection = TextDirection(p);
+            string divId = $"d{p.Paper:000}_{p.Section:000}_{p.ParagraphNo:000}";
+            sb.AppendLine($"   <td{textDirection}>");
+            sb.AppendLine($"      <div id=\"{divId}\" class=\"p-3 mb-2 {Param.ParagraphClass(p)}\">");
+            sb.AppendLine($"          {PrintText(p, true, true)}");
+            sb.AppendLine($"      <div>");
+            sb.AppendLine($"   </td>");
         }
 
         private void PrintLine(StringBuilder sb, Paragraph pLeft, Paragraph pRight)
         {
             sb.AppendLine("<tr>");
-            MakeColumn(sb, pLeft, false, true);
-            MakeColumn(sb, pRight, true, false);
+            MakeColumn(sb, pLeft);
+            MakeColumnWithDiv(sb, pRight);
             sb.AppendLine("</tr>");
         }
+
+        ///// <summary>
+        ///// Main page structure
+        ///// </summary>
+        ///// <param name="destinationFolder"></param>
+        ///// <param name="paperNo"></param>
+        ///// <param name="leftPaper"></param>
+        ///// <param name="rightPaper"></param>
+        ///// <param name="toc_table"></param>
+        //private void PrintPaper(string destinationFolder, short paperNo, Paper leftPaper, Paper rightPaper, TUB_TOC_Html toc_table)
+        //{
+        //    StringBuilder sb = new StringBuilder();
+        //    PageStart(sb, toc_table, paperNo);
+
+        //    PrintJumbotron(sb, $"O Livro de Urântia - Documento {paperNo}", $"PT-BR version: {DateTime.Now.ToString("dd-MM-yyyy")}", paperNo);
+
+        //    string textColor = Param.IsDarkTheme ? Param.DarkText : Param.LightText;
+        //    string backColor = Param.IsDarkTheme ? Param.DarkText : Param.LightText;
+
+        //    sb.AppendLine("<div class=\"container-fluid mt-5 \"> ");
+        //    sb.AppendLine("  <div class=\"row\"> ");
+        //    sb.AppendLine(" ");
+
+        //    // Index
+        //    sb.AppendLine($"    <div class=\"col-sm-3 {textColor}\"> ");
+        //    sb.AppendLine("      <h3>Index</h3> ");
+        //    toc_table.Html(sb);
+        //    sb.AppendLine("    </div> ");
+        //    sb.AppendLine(" ");
+
+        //    sb.AppendLine($"<div class=\"col-sm-9 {textColor}\"> ");
+        //    sb.AppendLine("	  <table class=\"table table-borderless\"> ");
+
+        //    // Page title
+        //    sb.AppendLine("	    <thead> ");
+        //    sb.AppendLine("	      <tr> ");
+        //    sb.AppendLine($"	        <th><h2 {TextClass()}>Paper {paperNo}</h2></th> ");
+        //    sb.AppendLine($"	        <th><h2 {TextClass()}>Documento {paperNo}</h2></th> ");
+        //    sb.AppendLine("	      </tr> ");
+        //    sb.AppendLine("	    </thead> ");
+
+        //    // Text
+        //    sb.AppendLine("	    <tbody> ");
+
+        //    for (int i = 0; i < leftPaper.Paragraphs.Count; i++)
+        //    {
+        //        try
+        //        {
+        //            PrintLine(sb, leftPaper.Paragraphs[i], rightPaper.Paragraphs[i]);
+        //        }
+        //        catch (Exception EX)
+        //        {
+        //            string SSS = EX.Message;
+        //        }
+        //    }
+
+        //    sb.AppendLine("	    </tbody> ");
+
+        //    sb.AppendLine("	  </table> ");
+        //    sb.AppendLine("  </div> ");
+        //    sb.AppendLine("</div> ");
+        //    sb.AppendLine("</div> ");
+
+        //    //PrintPager(sb, paperNo);
+        //    PageEnd(sb, toc_table);
+
+        //    var filePath = Path.Combine(destinationFolder, $"Doc{paperNo:000}.html");
+        //    if (File.Exists(filePath))
+        //    {
+        //        File.Delete(filePath);
+        //    }
+
+        //    File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
+        //}
 
         /// <summary>
         /// Main page structure
@@ -208,37 +289,19 @@ namespace UbStandardObjects.Objects
         /// <param name="leftPaper"></param>
         /// <param name="rightPaper"></param>
         /// <param name="toc_table"></param>
-        private void PrintPaper(string destinationFolder, short paperNo, Paper leftPaper, Paper rightPaper, TUB_TOC_Html toc_table)
+        private void PrintPaperForGitHubWebSite(string destinationFolder, short paperNo, Paper leftPaper, Paper rightPaper, TUB_TOC_Html toc_table)
         {
             StringBuilder sb = new StringBuilder();
-            PageStart(sb, toc_table, paperNo);
 
-            PrintJumbotron(sb, $"O Livro de Urântia - Documento {paperNo}", $"PT-BR version: {DateTime.Now.ToString("dd-MM-yyyy")}", paperNo);
-
-            string textColor = Param.IsDarkTheme ? Param.DarkText : Param.LightText;
-            string backColor = Param.IsDarkTheme ? Param.DarkText : Param.LightText;
-
-            sb.AppendLine("<div class=\"container-fluid mt-5 \"> ");
-            sb.AppendLine("  <div class=\"row\"> ");
-            sb.AppendLine(" ");
-
-            // Index
-            sb.AppendLine($"    <div class=\"col-sm-3 {textColor}\"> ");
-            sb.AppendLine("      <h3>Index</h3> ");
-            toc_table.Html(sb);
-            sb.AppendLine("    </div> ");
-            sb.AppendLine(" ");
-
-            sb.AppendLine($"<div class=\"col-sm-9 {textColor}\"> ");
             sb.AppendLine("	  <table class=\"table table-borderless\"> ");
 
             // Page title
-            sb.AppendLine("	    <thead> ");
-            sb.AppendLine("	      <tr> ");
-            sb.AppendLine($"	        <th><h2 {textClass()}>Paper {paperNo}</h2></th> ");
-            sb.AppendLine($"	        <th><h2 {textClass()}>Documento {paperNo}</h2></th> ");
-            sb.AppendLine("	      </tr> ");
-            sb.AppendLine("	    </thead> ");
+            sb.AppendLine("	    <thead>");
+            sb.AppendLine("	      <tr>");
+            sb.AppendLine($"        <th><div class=\"p-3 mb-2 parClosed\"><h2>Paper {paperNo}</h2> <div></th>");
+            sb.AppendLine($"        <th><div class=\"p-3 mb-2 parClosed\"><h2>Documento {paperNo}</h2> <div></th>");
+            sb.AppendLine("	      </tr>");
+            sb.AppendLine("	    </thead>");
 
             // Text
             sb.AppendLine("	    <tbody> ");
@@ -256,16 +319,10 @@ namespace UbStandardObjects.Objects
             }
 
             sb.AppendLine("	    </tbody> ");
-            
+
             sb.AppendLine("	  </table> ");
-            sb.AppendLine("  </div> ");
-            sb.AppendLine("</div> ");
-            sb.AppendLine("</div> ");
 
-            //PrintPager(sb, paperNo);
-            PageEnd(sb, toc_table);
-
-            var filePath = Path.Combine(destinationFolder, $"Doc{paperNo:000}.html");
+            var filePath = Path.Combine(destinationFolder, $@"content\Doc{paperNo:000}.html");
             if (File.Exists(filePath))
             {
                 File.Delete(filePath);
@@ -273,6 +330,67 @@ namespace UbStandardObjects.Objects
 
             File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
         }
+
+
+
+        public void MainPage(StringBuilder sb)
+        {
+            sb.AppendLine("<!DOCTYPE html> ");
+            sb.AppendLine("<html> ");
+            sb.AppendLine(" ");
+            sb.AppendLine("<head>  ");
+            sb.AppendLine("    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=windows-1252\"> ");
+            sb.AppendLine("    <title>Paper 1</title> ");
+            sb.AppendLine("    <meta charset=\"utf-8\">  ");
+            sb.AppendLine("    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">  ");
+            sb.AppendLine("    <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css\" rel=\"stylesheet\">   ");
+            sb.AppendLine("    <script src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js\"></script>  ");
+            sb.AppendLine("    <script src=\"https://cdn.jsdelivr.net/npm/jquery@3.6.1/dist/jquery.min.js\"></script>   ");
+            sb.AppendLine("    <link href=\"css/tub_pt_br.css\" rel=\"stylesheet\">    ");
+            sb.AppendLine("    <script src=\"js/tub_pt_br.js\"></script>  ");
+            sb.AppendLine("</head>  ");
+            sb.AppendLine(" ");
+            sb.AppendLine("<body class=\"bg-dark text-white\" onload=\"StartPage()\"> ");
+            //sb.AppendLine("<base target=\"_blank\">  ");
+            sb.AppendLine("<div class=\"container-fluid mt-5 bg-dark text-white\">  ");
+            sb.AppendLine(" ");
+
+            sb.AppendLine("	<div class=\"container-fluid p-5 bg-primary text-white text-left\">  ");
+            sb.AppendLine("  <div class=\"row\"> ");
+            sb.AppendLine("    <div class=\"col-sm-8\"> ");
+            sb.AppendLine("	    <h1>O Livro de Urântia - Tradução/Revisão PT BR</h1>   ");
+            sb.AppendLine($"    <h4>PT-BR version: {DateTime.Now.ToString("dd-MM-yyyy hh:mm:ss")} - Trabalho iniciado em 2006, ainda em andamento<a class=\"page-link\" href=\"https://sxs.urantia.org/Eng/Por/titles\">Urantia Foundation Multi Language link</a></h4> ");
+            sb.AppendLine("    </div> ");
+            sb.AppendLine("    <div class=\"col-sm-4\"> ");
+            sb.AppendLine("      <h4>Status de cada parágrafo:</h4> ");
+            sb.AppendLine("      <p><span class=\"badge badgeStarted\" width:180px>Started</span></p> ");
+            sb.AppendLine("      <p><span class=\"badge badgeWorking\">Working</span></p> ");
+            sb.AppendLine("      <p><span class=\"badge badgeDoubt\">Doubt</span></p> ");
+            sb.AppendLine("      <p><span class=\"badge badgeOk\">Ok</span></p> ");
+            sb.AppendLine("      <p><span class=\"badge badgeClosed\">Closed</span></p> ");
+            sb.AppendLine("    </div> ");
+            sb.AppendLine("  </div> ");
+            sb.AppendLine("	</div>  ");
+
+
+            sb.AppendLine(" ");
+            sb.AppendLine("<div class=\"container-fluid mt-5 \">  ");
+            sb.AppendLine("    <div class=\"row\">  ");
+            sb.AppendLine(" ");
+            sb.AppendLine("        <div id=\"leftColumn\" class=\"col-sm-3 black\"> <!-- Start left column --> ");
+            sb.AppendLine("        <h3>Index</h3>  ");
+            sb.AppendLine("        </div> <!-- End left column --> ");
+            sb.AppendLine(" ");
+            sb.AppendLine("        <div id= \"rightColumn\" class=\"col-sm-9 black\"> <!-- Start text column --> ");
+            sb.AppendLine("        </div> <!-- End text column --> ");
+            sb.AppendLine(" ");
+            sb.AppendLine("    </div>  <!-- End row --> ");
+            sb.AppendLine("</div>  <!-- End left column --> ");
+            sb.AppendLine(" ");
+            sb.AppendLine("</BODY> ");
+            sb.AppendLine("</HTML> ");
+        }
+
 
 
         public void GeneratePaper(string destinationFolder, Translation leftTranslation, Paper rightPaper, TUB_TOC_Html toc_table, short paperNo)
@@ -283,7 +401,7 @@ namespace UbStandardObjects.Objects
                 TranslationIdRight = TranslationIdLeft = Translation.NoTranslation;
                 TranslationTextDirection[0] = TranslationTextDirection[2] = false;
 
-                 if (leftTranslation != null)
+                if (leftTranslation != null)
                 {
                     TranslationIdLeft = leftTranslation.LanguageID;
                     TranslationTextDirection[2] = leftTranslation.RightToLeft;
@@ -291,7 +409,7 @@ namespace UbStandardObjects.Objects
 
                 leftPaper = GetPaper(paperNo, leftTranslation);
                 ShowMessage?.Invoke(leftPaper.ToString());
-                PrintPaper(destinationFolder, paperNo, leftPaper, rightPaper, toc_table);
+                PrintPaperForGitHubWebSite(destinationFolder, paperNo, leftPaper, rightPaper, toc_table);
 
             }
             catch (Exception)
