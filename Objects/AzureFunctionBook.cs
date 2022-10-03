@@ -9,7 +9,7 @@ namespace UbStandardObjects.Objects
     /// </summary>
     public class AzureFunctionBook : BootstrapBook
     {
-        public AzureFunctionBook(HtmlFormatParameters parameters) : base(parameters)
+        public AzureFunctionBook(Parameters parameters) : base(parameters)
         {
         }
 

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Text;
 using UbStandardObjects.Objects;
 using UBT_WebSite.Classes;
+
 using static System.Net.Mime.MediaTypeNames;
 
 namespace UbStandardObjects.Objects
@@ -18,7 +19,7 @@ namespace UbStandardObjects.Objects
         // Data used to help columns page
         protected double percent = 0;
 
-        protected HtmlFormatParameters Param = null;
+        protected Parameters Param = null;
 
         protected short TranslationIdLeft = Translation.NoTranslation;
 
@@ -30,7 +31,7 @@ namespace UbStandardObjects.Objects
         protected bool[] TranslationTextDirection = { RightToLeft, RightToLeft, RightToLeft };
 
 
-        public HtmlFormat(HtmlFormatParameters parameters)
+        public HtmlFormat(Parameters parameters)
         {
             Param = parameters;
         }
@@ -39,13 +40,13 @@ namespace UbStandardObjects.Objects
 
         //  text-white
 
-        protected void paragraphStyle(StringBuilder sb, ParagraphStatus ParagraphStatus)
+        protected void paragraphStyle(StringBuilder sb, ParagraphStatus paragraphStatus)
         {
-            sb.AppendLine("." + statusStyleName(ParagraphStatus));
+            sb.AppendLine("." + statusStyleName(paragraphStatus));
             sb.AppendLine("{  ");
             sb.AppendLine(" font-family: " + Param.FontFamily + ";");
             sb.AppendLine(" font-size: " + Param.FontSize.ToString() + ";  ");
-            sb.AppendLine(" background-color: " + statusBackgroundColor(ParagraphStatus) + ";");
+            sb.AppendLine(" background-color: " + Param.BackgroundParagraphColor(paragraphStatus) + ";");
             sb.AppendLine(" padding: 16px; ");
             sb.AppendLine("}  ");
         }
@@ -177,22 +178,7 @@ namespace UbStandardObjects.Objects
 
         protected virtual string statusBackgroundColor(ParagraphStatus ParagraphStatus)
         {
-            //switch (ParagraphStatus)
-            //{
-            //    case ParagraphStatus.Started:
-            //        return System.Drawing.ColorTranslator.ToHtml(BackgroundStarted).Trim();
-            //    case ParagraphStatus.Working:
-            //        return System.Drawing.ColorTranslator.ToHtml(BackgroundWorking).Trim();
-            //    case ParagraphStatus.Doubt:
-            //        return System.Drawing.ColorTranslator.ToHtml(BackgroundDoubt).Trim();
-            //    case ParagraphStatus.Ok:
-            //        return System.Drawing.ColorTranslator.ToHtml(BackgroundOk).Trim();
-            //    case ParagraphStatus.Closed:
-            //        return System.Drawing.ColorTranslator.ToHtml(BackgroundClosed).Trim();
-            //}
-            //return System.Drawing.ColorTranslator.ToHtml(BackgroundStarted).Trim();
-            throw new Exception("Rever HtmlFormat.statusBackgroundColor");
-            //return "";
+            return Param.BackgroundParagraphColor(ParagraphStatus);
         }
 
         protected string statusStyleName(ParagraphStatus ParagraphStatus)
@@ -394,7 +380,7 @@ namespace UbStandardObjects.Objects
 
         protected Paper GetPaper(short paperNo, Translation translation)
         {
-            return translation.Papers[paperNo];
+            return translation.Paper(paperNo);
         }
 
         /// <summary>

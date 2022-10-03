@@ -15,9 +15,21 @@ namespace UbStandardObjects.Objects
         private string LocalRepositoryFolder = null;
         private string TocTableFileName = "TOC_Table.json";
 
-        public TranslationEdit(string localRepositoryFolder)
+        public TranslationEdit(Translation trans, string localRepositoryFolder)
         {
             LocalRepositoryFolder = localRepositoryFolder;
+            this.LanguageID = trans.LanguageID;
+            this.Description = trans.Description;
+            this.TIN = trans.TIN;
+            this.TUB = trans.TUB;
+            this.Version = trans.Version;
+            this.TextButton = trans.TextButton;
+            this.CultureID = trans.CultureID;
+            this.UseBold = trans.UseBold;
+            this.RightToLeft = trans.RightToLeft;
+            this.StartingYear = trans.StartingYear;
+            this.EndingYear = trans.EndingYear;
+            this.PaperTranslation = trans.PaperTranslation;
         }
 
         private Paper GetPaperEdit(short paperNo)
@@ -29,7 +41,7 @@ namespace UbStandardObjects.Objects
             string folderPaper = Path.Combine(LocalRepositoryFolder, $"Doc{paperNo:000}");
             foreach (string filePath in Directory.GetFiles(folderPaper, "*.md"))
             {
-                ParagraphEdit paragraph = new ParagraphEdit(filePath);
+                ParagraphMarkDown paragraph = new ParagraphMarkDown(filePath);
                 paragraph.FormatInt = EnglishTranslation.GetFormat(paragraph);
                 paper.Paragraphs.Add(paragraph);
             }
@@ -43,7 +55,7 @@ namespace UbStandardObjects.Objects
 
         public ParagraphMarkDown GetParagraph(short paperNo, short section, short paragraphNo)
         {
-            ParagraphMarkDown par = new ParagraphMarkDown(LocalRepositoryFolder, ParagraphMarkDown.FilePath(paperNo, section, paragraphNo));
+            ParagraphMarkDown par = new ParagraphMarkDown(LocalRepositoryFolder);
             return par;
         }
 

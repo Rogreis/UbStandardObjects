@@ -14,7 +14,7 @@ namespace UbStandardObjects.Objects
     {
         public event dlShowMessage ShowMessage = null;
 
-        public BootstrapBook(HtmlFormatParameters parameters) : base(parameters)
+        public BootstrapBook(Parameters parameters) : base(parameters)
         {
         }
 
@@ -27,8 +27,10 @@ namespace UbStandardObjects.Objects
 
         private string IdentLink(Paragraph p)
         {
-            string href = $"https://github.com/Rogreis/PtAlternative/blob/correcoes/Doc{p.Paper:000}/Par_{p.Paper:000}_{p.Section:000}_{p.ParagraphNo:000}.md";
-            return $"<a href=\"{href}\" class=\"{Param.ParagraphClass(p)}\">{p.Identification}</a>";
+            //string href = $"https://github.com/Rogreis/PtAlternative/blob/correcoes/Doc{p.Paper:000}/Par_{p.Paper:000}_{p.Section:000}_{p.ParagraphNo:000}.md";
+            //return $"<a href=\"{href}\" class=\"{Param.ParagraphClass(p)}\">{p.Identification}</a>";
+            string href = $"javascript:openEdit('{p.Paper};{p.Section};{p.ParagraphNo};');";
+            return $"<a href=\"{href}\" class=\"{Param.BackgroundParagraphColor(p.Status)}\">{p.Identification}</a>";
         }
 
         private void PageStart(StringBuilder sb, TUB_TOC_Html toc_table, short paperNo)
@@ -191,9 +193,9 @@ namespace UbStandardObjects.Objects
         protected void MakeColumnWithDiv(StringBuilder sb, Paragraph p)
         {
             string textDirection = TextDirection(p);
-            string divId = $"d{p.Paper:000}_{p.Section:000}_{p.ParagraphNo:000}";
+            string divId = $"d{p.Paper}_{p.Section}_{p.ParagraphNo}";
             sb.AppendLine($"   <td{textDirection}>");
-            sb.AppendLine($"      <div id=\"{divId}\" class=\"p-3 mb-2 {Param.ParagraphClass(p)}\">");
+            sb.AppendLine($"      <div id=\"{divId}\" class=\"p-3 mb-2 {Param.BackgroundParagraphColor(p.Status)}\">");
             sb.AppendLine($"          {PrintText(p, true, true)}");
             sb.AppendLine($"      <div>");
             sb.AppendLine($"   </td>");
@@ -335,60 +337,7 @@ namespace UbStandardObjects.Objects
 
         public void MainPage(StringBuilder sb)
         {
-            sb.AppendLine("<!DOCTYPE html> ");
-            sb.AppendLine("<html> ");
-            sb.AppendLine(" ");
-            sb.AppendLine("<head>  ");
-            sb.AppendLine("    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=windows-1252\"> ");
-            sb.AppendLine("    <title>Paper 1</title> ");
-            sb.AppendLine("    <meta charset=\"utf-8\">  ");
-            sb.AppendLine("    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">  ");
-            sb.AppendLine("    <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css\" rel=\"stylesheet\">   ");
-            sb.AppendLine("    <script src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js\"></script>  ");
-            sb.AppendLine("    <script src=\"https://cdn.jsdelivr.net/npm/jquery@3.6.1/dist/jquery.min.js\"></script>   ");
-            sb.AppendLine("    <link href=\"css/tub_pt_br.css\" rel=\"stylesheet\">    ");
-            sb.AppendLine("    <script src=\"js/tub_pt_br.js\"></script>  ");
-            sb.AppendLine("</head>  ");
-            sb.AppendLine(" ");
-            sb.AppendLine("<body class=\"bg-dark text-white\" onload=\"StartPage()\"> ");
-            //sb.AppendLine("<base target=\"_blank\">  ");
-            sb.AppendLine("<div class=\"container-fluid mt-5 bg-dark text-white\">  ");
-            sb.AppendLine(" ");
-
-            sb.AppendLine("	<div class=\"container-fluid p-5 bg-primary text-white text-left\">  ");
-            sb.AppendLine("  <div class=\"row\"> ");
-            sb.AppendLine("    <div class=\"col-sm-8\"> ");
-            sb.AppendLine("	    <h1>O Livro de Urântia - Tradução/Revisão PT BR</h1>   ");
-            sb.AppendLine($"    <h4>PT-BR version: {DateTime.Now.ToString("dd-MM-yyyy hh:mm:ss")} - Trabalho iniciado em 2006, ainda em andamento<a class=\"page-link\" href=\"https://sxs.urantia.org/Eng/Por/titles\">Urantia Foundation Multi Language link</a></h4> ");
-            sb.AppendLine("    </div> ");
-            sb.AppendLine("    <div class=\"col-sm-4\"> ");
-            sb.AppendLine("      <h4>Status de cada parágrafo:</h4> ");
-            sb.AppendLine("      <p><span class=\"badge badgeStarted\" width:180px>Started</span></p> ");
-            sb.AppendLine("      <p><span class=\"badge badgeWorking\">Working</span></p> ");
-            sb.AppendLine("      <p><span class=\"badge badgeDoubt\">Doubt</span></p> ");
-            sb.AppendLine("      <p><span class=\"badge badgeOk\">Ok</span></p> ");
-            sb.AppendLine("      <p><span class=\"badge badgeClosed\">Closed</span></p> ");
-            sb.AppendLine("    </div> ");
-            sb.AppendLine("  </div> ");
-            sb.AppendLine("	</div>  ");
-
-
-            sb.AppendLine(" ");
-            sb.AppendLine("<div class=\"container-fluid mt-5 \">  ");
-            sb.AppendLine("    <div class=\"row\">  ");
-            sb.AppendLine(" ");
-            sb.AppendLine("        <div id=\"leftColumn\" class=\"col-sm-3 black\"> <!-- Start left column --> ");
-            sb.AppendLine("        <h3>Index</h3>  ");
-            sb.AppendLine("        </div> <!-- End left column --> ");
-            sb.AppendLine(" ");
-            sb.AppendLine("        <div id= \"rightColumn\" class=\"col-sm-9 black\"> <!-- Start text column --> ");
-            sb.AppendLine("        </div> <!-- End text column --> ");
-            sb.AppendLine(" ");
-            sb.AppendLine("    </div>  <!-- End row --> ");
-            sb.AppendLine("</div>  <!-- End left column --> ");
-            sb.AppendLine(" ");
-            sb.AppendLine("</BODY> ");
-            sb.AppendLine("</HTML> ");
+            // main page is no more generated 
         }
 
 

@@ -44,9 +44,9 @@ namespace UbStandardObjects.Objects
 
         private List<TUB_TOC_Entry> TocEntries = null;
 
-        HtmlFormatParameters Param = null;
+        private Parameters Param = null;
 
-        public TUB_TOC_Html(HtmlFormatParameters param, List<TUB_TOC_Entry> toc_entries)
+        public TUB_TOC_Html(Parameters param, List<TUB_TOC_Entry> toc_entries)
         {
             TocEntries= toc_entries;
             Param = param;

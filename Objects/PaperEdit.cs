@@ -13,13 +13,15 @@ namespace UbStandardObjects.Objects
     public class PaperEdit : Paper
     {
 
-        private string FolderPaper { get; set; } = "";
+        private string RepositoryFolder { get; set; } = "";
         private short paperEditNo = -1;
+        private Notes NotesObject = null;
 
-        public PaperEdit(short paperNo, string folderPaper)
+        public PaperEdit(Notes notes, short paperNo, string repositoryFolder)
         {
+            NotesObject = notes;    
             paperEditNo = paperNo;
-            FolderPaper = folderPaper;
+            RepositoryFolder = repositoryFolder;
             GetParagraphsFromRepository();
         }
 
@@ -28,7 +30,7 @@ namespace UbStandardObjects.Objects
         /// </summary>
         private void GetParagraphsFromRepository()
         {
-            foreach (string pathParagraphFile in Directory.GetFiles(FolderPaper, $"Par_{paperEditNo:000}_*.md"))
+            foreach (string pathParagraphFile in Directory.GetFiles(RepositoryFolder, $"Par_{paperEditNo:000}_*.md"))
             {
                 Paragraphs.Add(new ParagraphMarkDown(pathParagraphFile));
             }
@@ -71,74 +73,14 @@ namespace UbStandardObjects.Objects
             return Paragraphs.Find(p => p.Section == entry.Section && p.ParagraphNo == entry.ParagraphNo);
         }
 
-        private List<Note> Notes = null;
-
         /// <summary>
-        /// Get the zipped format table json and unzipp it to return
+        /// Get all availble notes data
         /// </summary>
-        /// <returns></returns>
-        public bool GetNotes(string repositoryFolder, short paperNo)
+        /// <param name="paragraph"></param>
+        public void GetNotesData(ParagraphMarkDown paragraph)
         {
-            try
-            {
-                string filePath = Path.Combine(repositoryFolder, $@"{ParagraphMarkDown.FolderPath(paperNo)}\Notes.json");
-                string jsonString = File.ReadAllText(filePath);
-                var options = new JsonSerializerOptions
-                {
-                    AllowTrailingCommas = true,
-                    WriteIndented = true,
-                };
-                NotesRoot root = JsonSerializer.Deserialize<NotesRoot>(jsonString, options);
-                if (root != null)
-                {
-                    Notes = new List<Note>(root.Notes);
-                    foreach (ParagraphMarkDown p in Paragraphs)
-                    {
-                        GetStatus(p);
-                    }
-                    return true;
-                }
-                // Fill complementary data
-                return false;
-            }
-            catch (Exception ex)
-            {
-                StaticObjects.Logger.Error("GetNotes", ex);
-                return false;
-            }
-        }
-
-        public void GetStatus(ParagraphMarkDown paragraph)
-        {
-            Note note= Notes.Find(n => n.Paper == PaperNo && n.Section == paragraph.Section && n.Paragraph == paragraph.ParagraphNo);
-            if (note != null)
-            {
-                paragraph.SetStatusDate(note.Status, note.LastDate, note.Format);
-            }
-            else
-            {
-                paragraph.SetStatusDate(0, DateTime.MinValue, 1);
-            }
-        }
-
-        // ----------------------------------
-        // Classes used to get data from file
-
-        private class NotesRoot
-        {
-            public Note[] Notes { get; set; }
-        }
-
-        public class Note
-        {
-            public int Paper { get; set; }
-            public int Section { get; set; }
-            public int Paragraph { get; set; }
-            public string TranslatorNote { get; set; }
-            public string Notes { get; set; }
-            public DateTime LastDate { get; set; }
-            public short Status { get; set; } = 0;
-            public short Format { get; set; } = 0;
+            Note note = NotesObject.GetNote(paragraph);
+            paragraph.SetNote(note);
         }
 
     }

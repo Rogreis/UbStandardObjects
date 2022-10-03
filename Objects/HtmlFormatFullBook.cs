@@ -6,7 +6,7 @@ namespace UbStandardObjects.Objects
 {
     public class HtmlFormatFullBook : HtmlFormat
     {
-        public HtmlFormatFullBook(HtmlFormatParameters parameters) : base(parameters)
+        public HtmlFormatFullBook(Parameters parameters) : base(parameters)
         {
         }
 

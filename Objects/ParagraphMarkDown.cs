@@ -11,75 +11,58 @@ namespace UbStandardObjects.Objects
 {
     public class ParagraphMarkDown : Paragraph
     {
-        public string RelativeFilePath { get; set; } = "";
 
-        public string RepositoryPath { get; set; } = "";
+        public string TranslatorNote { get; set; }
 
-        public DateTime LastChange { get; set; }
+        public string Notes { get; set; }
 
-        public string RelativeFilePathWindows
+        public DateTime LastDate { get; set; }
+
+
+        public static string RelativeFilePath(Paragraph p)
         {
-            get
-            {
-                return RelativeFilePath.Replace("/", "\\");
-            }
+            return $"Doc{p.Paper:000}/Par_{p.Paper:000}_{p.Section:000}_{p.ParagraphNo:000}.md";
         }
 
-        public string BuildRelativePath
+        public static string Url(Paragraph p)
         {
-            get
-            {
-                return $"Doc{Paper:000}/Par_{Paper:000}_{Section:000}_{ParagraphNo:000}.md";
-            }
+            return $"https://github.com/Rogreis/PtAlternative/blob/correcoes/Doc{p.Paper:000}/Par_{p.Paper:000}_{p.Section:000}_{p.ParagraphNo:000}.md";
         }
 
-        public string FullPath
+
+        public static string RelativeFilePathWindows(Paragraph p)
         {
-            get
-            {
-                return Path.Combine(RepositoryPath, RelativeFilePathWindows);
-            }
+            return $@"Doc{p.Paper:000}\Par_{p.Paper:000}_{p.Section:000}_{p.ParagraphNo:000}.md";
         }
 
-        public string Ident
-        {
-            get
-            {
-                return Path.GetFileNameWithoutExtension(FullPath);
-            }
-        }
 
-        public string LocalPathFile
+        public static string FullPath(string repositoryPath, Paragraph p)
         {
-            get { return Path.GetDirectoryName(RepositoryPath); }
-        }
-
-        public ParagraphMarkDown(string baseRepositoryPath, string relativeFilePath)
-        {
-            RepositoryPath = baseRepositoryPath;
-            RelativeFilePath = relativeFilePath;
-            Text = MarkdownToHtml(File.ReadAllText(FullPath));
-            char[] sep = { '_' };
-            string fileName = Path.GetFileNameWithoutExtension(FullPath).Remove(0, 4);
-            string[] parts = fileName.Split(sep, StringSplitOptions.RemoveEmptyEntries);
-            Paper = Convert.ToInt16(parts[0]);
-            Section = Convert.ToInt16(parts[1]);
-            ParagraphNo = Convert.ToInt16(parts[2]);
-            IsEditTranslation = true;
+            return Path.Combine(repositoryPath, RelativeFilePathWindows(p));
         }
 
         public ParagraphMarkDown(string filePath)
         {
+            Text = MarkdownToHtml(File.ReadAllText(filePath));
             char[] sep = { '_' };
             string fileName = Path.GetFileNameWithoutExtension(filePath).Remove(0, 4);
             string[] parts = fileName.Split(sep, StringSplitOptions.RemoveEmptyEntries);
             Paper = Convert.ToInt16(parts[0]);
             Section = Convert.ToInt16(parts[1]);
             ParagraphNo = Convert.ToInt16(parts[2]);
-            Text = MarkdownToHtml(File.ReadAllText(filePath));
-            RelativeFilePath = BuildRelativePath;
-            RepositoryPath = filePath.Replace(RelativeFilePathWindows, "");
             IsEditTranslation = true;
+        }
+
+        public ParagraphMarkDown(string repositoryPath, string ident)
+        {
+            char[] sep = { '_' };
+            string[] parts = ident.Split(sep, StringSplitOptions.RemoveEmptyEntries);
+            Paper = Convert.ToInt16(parts[0]);
+            Section = Convert.ToInt16(parts[1]);
+            ParagraphNo = Convert.ToInt16(parts[2]);
+            IsEditTranslation = true;
+            string filePath = FullPath(repositoryPath, this);
+            Text = MarkdownToHtml(File.ReadAllText(filePath));
         }
 
 
@@ -130,28 +113,41 @@ namespace UbStandardObjects.Objects
             return $"Doc{paperNo:000}\\Par_{paperNo:000}_{section:000}_{paragraphNo:000}.md";
         }
 
-        public void SetStatusDate(short status, DateTime date, short format)
+        public void SetNote(Note note)
         {
-            _status = status;
-            LastChange=date;
-            FormatInt = format;
+
+            if (note != null)
+            {
+                TranslatorNote = note.TranslatorNote;
+                Notes = note.Notes;
+                LastDate = note.LastDate;
+                _status = note.Status;
+            }
+            else
+            {
+                TranslatorNote = "";
+                Notes = "";
+                LastDate = DateTime.MinValue;
+                _status = 0;
+            }
         }
 
-        //public bool Save(string text, Note note)
-        //{
-        //    try
-        //    {
-        //        Text = text;
-        //        File.WriteAllText(FullPath, text);
-        //        return true;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw;
-        //        //return false;
-        //    }
-        //}
 
-  
+        public bool Save(string repositoryPath, string text, Note note)
+        {
+            try
+            {
+                Text = text;
+                File.WriteAllText(FullPath(repositoryPath, this), text);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw;
+                //return false;
+            }
+        }
+
+
     }
 }

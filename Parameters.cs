@@ -22,11 +22,24 @@ namespace UbStandardObjects
 
 	public abstract class Parameters
 	{
+        private string darkTheme { get; set; } = "bg-dark text-white";
+        private string lightTheme { get; set; } = "bg-light text-black";
 
-		/// <summary>
-		/// Last position in the text, default for first paragraph
-		/// </summary>
-		public TOC_Entry Entry { get; set; } = new TOC_Entry(0, 0, 1, 0, 0, 0);
+        //// From https://getbootstrap.com/docs/5.0/utilities/background/
+        //// https://www.w3schools.com/tags/ref_colornames.asp
+        //private const string ClassParagraphStarted = "p-3 mb-2 bg-secondary text-white";
+        //private const string ClassParagraphWorking = "p-3 mb-2 bg-warning text-dark";
+        //private const string ClassParagraphDoubt = "p-3 mb-2 bg-danger text-white";
+        //private const string ClassParagraphOk = "p-3 mb-2 bg-primary text-white";
+
+        //private const string ClassParagraphDarkTheme = "p-3 mb-2 bg-dark text-white";
+        //private const string ClassParagraphLightTheme = "p-3 mb-2 bg-transparent text-dark";
+
+
+        /// <summary>
+        /// Last position in the text, default for first paragraph
+        /// </summary>
+        public TOC_Entry Entry { get; set; } = new TOC_Entry(0, 0, 1, 0, 0, 0);
 
 		public short LanguageIDLeftTranslation { get; set; } = 0;
 
@@ -99,9 +112,7 @@ namespace UbStandardObjects
 
 		public double AnnotationWindowHeight { get; set; } = 450;
 
-        public HtmlFormatParameters HtmlParam { get; set; } = new HtmlFormatParameters();
-
-		
+	
 		/// <summary>
 		/// Currente executable folder initialize every execution
 		/// </summary>
@@ -131,6 +142,64 @@ namespace UbStandardObjects
 		/// Github paragraphs repository
 		/// </summary>
 		public string UrlRepository { get; set; } = null;
+
+        public float FontSize { get; set; } = 14;
+
+        public string FontFamily { get; set; } = "Verdana,Arial,Helvetica";
+
+        public bool IsDarkTheme { get; set; } = true;
+
+        public string DarkText { get; set; } = "black";
+
+        public string LightText { get; set; } = "white";
+
+        public string DarkTextHighlihted { get; set; } = "yellow";
+
+        public string LightTextHighlihted { get; set; } = "blue";
+
+        public string DarkTextGray { get; set; } = "yellow";
+
+        public string LightTextGray { get; set; } = "bisque";
+
+		public string BackTextColor
+		{
+			get
+			{
+				return IsDarkTheme ? darkTheme : lightTheme;
+			}
+		}
+
+        /// <summary>
+        /// Returns the classes for a paragraph depending on IsEditTranslation and IsDarkTheme
+        /// </summary>
+        /// <param name="ParagraphStatus"></param>
+        /// <returns></returns>
+        public virtual string ParagraphClass(Paragraph p)
+        {
+            if (p != null && p.IsEditTranslation)
+            {
+                switch (p.Status)
+                {
+                    case ParagraphStatus.Started:
+                        return "parStarted";
+                    case ParagraphStatus.Working:
+                        return "parWorking";
+                    case ParagraphStatus.Doubt:
+                        return "parDoubt";
+                    case ParagraphStatus.Ok:
+                        return "parOk";
+                    case ParagraphStatus.Closed:
+                        return "parClosed";
+                }
+            }
+            return "parClosed";
+        }
+
+
+        public virtual string BackgroundParagraphColor(ParagraphStatus ParagraphStatus)
+		{
+			return IsDarkTheme ? darkTheme : lightTheme;
+        }
 
     }
 }
