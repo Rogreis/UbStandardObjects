@@ -38,9 +38,12 @@ namespace UbStandardObjects.Objects
 
         #region Styles
 
-        //  text-white
+        private string statusStyleHighlightedName(ParagraphStatus ParagraphStatus)
+        {
+            return "stParHigh" + ParagraphStatus.ToString();
+        }
 
-        protected void paragraphStyle(StringBuilder sb, ParagraphStatus paragraphStatus)
+        private void paragraphStyle(StringBuilder sb, ParagraphStatus paragraphStatus)
         {
             sb.AppendLine("." + statusStyleName(paragraphStatus));
             sb.AppendLine("{  ");
@@ -70,7 +73,7 @@ namespace UbStandardObjects.Objects
             sb.AppendLine(" ");
         }
 
-        protected void ItalicBoldStyles(StringBuilder sb)
+        private void ItalicBoldStyles(StringBuilder sb)
         {
             sb.AppendLine("i, b, em  {  ");
             sb.AppendLine(" font-family: " + Param.FontFamily + ";");
@@ -80,7 +83,7 @@ namespace UbStandardObjects.Objects
             sb.AppendLine("}  ");
         }
 
-        protected void HeaderStyle(StringBuilder sb, int header, float size)
+        private void HeaderStyle(StringBuilder sb, int header, float size)
         {
             sb.AppendLine($"h{header} {{");
             sb.AppendLine($"font-family: {Param.FontFamily};");
@@ -92,7 +95,7 @@ namespace UbStandardObjects.Objects
             sb.AppendLine("}");
         }
 
-        protected void LinkStyles(StringBuilder sb)
+        private void LinkStyles(StringBuilder sb)
         {
             sb.AppendLine("a:link { ");
             sb.AppendLine($"  color: {(Param.IsDarkTheme ? Param.LightText : Param.DarkText)}; ");
@@ -119,6 +122,28 @@ namespace UbStandardObjects.Objects
             sb.AppendLine("} ");
         }
 
+        protected string statusStyleName(ParagraphStatus ParagraphStatus)
+        {
+            return "stPar" + ParagraphStatus.ToString();
+        }
+
+        /// <summary>
+        /// Calculate the text direction for a translation
+        /// </summary>
+        /// <param name="translation"></param>
+        /// <returns></returns>
+        protected string TextDirection(Paragraph p)
+        {
+            if (p.TranslationId == TranslationIdLeft)
+            {
+                return TranslationTextDirection[0] ? " dir=\"rtl\"" : "";
+            }
+            if (p.TranslationId == TranslationIdMiddle)
+            {
+                return TranslationTextDirection[1] ? " dir=\"rtl\"" : "";
+            }
+            return TranslationTextDirection[2] ? " dir=\"rtl\"" : "";
+        }
 
         /// <summary>
         /// Create the styles for the page
@@ -176,37 +201,13 @@ namespace UbStandardObjects.Objects
 
 
 
-        protected virtual string statusBackgroundColor(ParagraphStatus ParagraphStatus)
-        {
-            return Param.BackgroundParagraphColor(ParagraphStatus);
-        }
+        //protected virtual string statusBackgroundColor(ParagraphStatus ParagraphStatus)
+        //{
+        //    return Param.BackgroundParagraphColor(ParagraphStatus);
+        //}
 
-        protected string statusStyleName(ParagraphStatus ParagraphStatus)
-        {
-            return "stPar" + ParagraphStatus.ToString();
-        }
-        protected string statusStyleHighlightedName(ParagraphStatus ParagraphStatus)
-        {
-            return "stParHigh" + ParagraphStatus.ToString();
-        }
 
-        /// <summary>
-        /// Calculate the text direction for a translation
-        /// </summary>
-        /// <param name="translation"></param>
-        /// <returns></returns>
-        protected string TextDirection(Paragraph p)
-        {
-            if (p.TranslationId == TranslationIdLeft)
-            {
-                return TranslationTextDirection[0] ? " dir=\"rtl\"" : "";
-            }
-            if (p.TranslationId == TranslationIdMiddle)
-            {
-                return TranslationTextDirection[1] ? " dir=\"rtl\"" : "";
-            }
-            return TranslationTextDirection[2] ? " dir=\"rtl\"" : "";
-        }
+
 
 
         #endregion

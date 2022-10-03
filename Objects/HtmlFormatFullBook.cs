@@ -11,57 +11,57 @@ namespace UbStandardObjects.Objects
         }
 
 
-        /// <summary>
-        /// Create the styles for the page
-        /// </summary>
-        /// <param name="sb"></param>
-        protected override void Styles(StringBuilder sb)
-        {
+        ///// <summary>
+        ///// Create the styles for the page
+        ///// </summary>
+        ///// <param name="sb"></param>
+        //protected override void Styles(StringBuilder sb)
+        //{
 
-            float size = Param.FontSize;
+        //    float size = Param.FontSize;
 
-            sb.AppendLine("<style type=\"text/css\">  ");
-            sb.AppendLine("  ");
+        //    sb.AppendLine("<style type=\"text/css\">  ");
+        //    sb.AppendLine("  ");
 
-            // Body and Table
-            sb.AppendLine($"body {{font-family: {Param.FontFamily}; font-size: {size + 4}px; color: #000000;}}");
-            sb.AppendLine("table {  ");
-            sb.AppendLine("    border: 0px solid #CCC;  ");
-            sb.AppendLine("    border-collapse: collapse;  ");
-            sb.AppendLine("}  ");
-            sb.AppendLine($"td   {{font-family: {Param.FontFamily}; padding: 0px; font-size: {size}px; text-align: left; font-style: none; text-transform: none; font-weight: none; border: none;}}");
+        //    // Body and Table
+        //    sb.AppendLine($"body {{font-family: {Param.FontFamily}; font-size: {size + 4}px; color: #000000;}}");
+        //    sb.AppendLine("table {  ");
+        //    sb.AppendLine("    border: 0px solid #CCC;  ");
+        //    sb.AppendLine("    border-collapse: collapse;  ");
+        //    sb.AppendLine("}  ");
+        //    sb.AppendLine($"td   {{font-family: {Param.FontFamily}; padding: 0px; font-size: {size}px; text-align: left; font-style: none; text-transform: none; font-weight: none; border: none;}}");
 
-            // Sup
-            sb.AppendLine($"sup  {{font-size: {size - 1}px;  color: #666666;}}");
-
-
-            // Title
-            HeaderStyle(sb, 1, size + 6);
-            HeaderStyle(sb, 2, size + 4);
-            HeaderStyle(sb, 3, size + 2);
+        //    // Sup
+        //    sb.AppendLine($"sup  {{font-size: {size - 1}px;  color: #666666;}}");
 
 
-            paragraphStyle(sb, ParagraphStatus.Started);
-            paragraphStyle(sb, ParagraphStatus.Working);
-            paragraphStyle(sb, ParagraphStatus.Doubt);
-            paragraphStyle(sb, ParagraphStatus.Ok);
-            paragraphStyle(sb, ParagraphStatus.Closed);
-
-            ItalicBoldStyles(sb);
-            sb.AppendLine("  ");
-            // Links
-            LinkStyles(sb);
-            sb.AppendLine("  ");
+        //    // Title
+        //    HeaderStyle(sb, 1, size + 6);
+        //    HeaderStyle(sb, 2, size + 4);
+        //    HeaderStyle(sb, 3, size + 2);
 
 
-            // Italic
-            //sb.AppendLine($".ColItal {{font-family: {Param.FontFamily}; font-size: {size}px; color: #663333; font-style: italic;}}");
-            //sb.AppendLine(".Colored {font-family: " + Param.FontFamily + "; font-size: 14px; color: #663333;}");
-            //sb.AppendLine(".ppg     {font-family: " + Param.FontFamily + "; font-size: 9px;  color: #999999;  vertical-align:top;}");
-            //sb.AppendLine(".super   {font-family: " + Param.FontFamily + "; font-size: 9px;  color: #000000;  vertical-align:top;}");
+        //    paragraphStyle(sb, ParagraphStatus.Started);
+        //    paragraphStyle(sb, ParagraphStatus.Working);
+        //    paragraphStyle(sb, ParagraphStatus.Doubt);
+        //    paragraphStyle(sb, ParagraphStatus.Ok);
+        //    paragraphStyle(sb, ParagraphStatus.Closed);
 
-            sb.AppendLine("</style>  ");
-        }
+        //    ItalicBoldStyles(sb);
+        //    sb.AppendLine("  ");
+        //    // Links
+        //    LinkStyles(sb);
+        //    sb.AppendLine("  ");
+
+
+        //    // Italic
+        //    //sb.AppendLine($".ColItal {{font-family: {Param.FontFamily}; font-size: {size}px; color: #663333; font-style: italic;}}");
+        //    //sb.AppendLine(".Colored {font-family: " + Param.FontFamily + "; font-size: 14px; color: #663333;}");
+        //    //sb.AppendLine(".ppg     {font-family: " + Param.FontFamily + "; font-size: 9px;  color: #999999;  vertical-align:top;}");
+        //    //sb.AppendLine(".super   {font-family: " + Param.FontFamily + "; font-size: 9px;  color: #000000;  vertical-align:top;}");
+
+        //    sb.AppendLine("</style>  ");
+        //}
 
         protected override string makeDIV(Paragraph p, bool selected = false, bool outputAsLink = false)
         {

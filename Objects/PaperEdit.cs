@@ -60,6 +60,16 @@ namespace UbStandardObjects.Objects
         }
 
         /// <summary>
+        /// Get all availble notes data
+        /// </summary>
+        /// <param name="paragraph"></param>
+        private void GetNotesData(ParagraphMarkDown paragraph)
+        {
+            Note note = NotesObject.GetNote(paragraph);
+            paragraph.SetNote(note);
+        }
+
+        /// <summary>
         /// Return an specific paragraph
         /// </summary>
         /// <param name="entry"></param>
@@ -70,18 +80,15 @@ namespace UbStandardObjects.Objects
             {
                 GetParagraphsFromRepository();
             }
-            return Paragraphs.Find(p => p.Section == entry.Section && p.ParagraphNo == entry.ParagraphNo);
+            ParagraphMarkDown par = (ParagraphMarkDown)Paragraphs.Find(p => p.Section == entry.Section && p.ParagraphNo == entry.ParagraphNo);
+            if (par == null)
+            {
+                throw new Exception($"Paragraph not found for {entry}");
+            }
+            GetNotesData(par);
+            return par;
         }
 
-        /// <summary>
-        /// Get all availble notes data
-        /// </summary>
-        /// <param name="paragraph"></param>
-        public void GetNotesData(ParagraphMarkDown paragraph)
-        {
-            Note note = NotesObject.GetNote(paragraph);
-            paragraph.SetNote(note);
-        }
 
     }
 }

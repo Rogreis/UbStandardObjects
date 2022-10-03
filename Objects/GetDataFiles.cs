@@ -304,7 +304,7 @@ namespace UbStandardObjects.Objects
 
 
         /// <summary>
-        /// Get the zipped format table json and unzipp it to return
+        /// Get the json string for a paper notes
         /// </summary>
         /// <returns></returns>
         public string GetNotes(short paperNo)

@@ -33,63 +33,7 @@ namespace UbStandardObjects.Objects
             return $"<a href=\"{href}\" class=\"{Param.BackgroundParagraphColor(p.Status)}\">{p.Identification}</a>";
         }
 
-        private void PageStart(StringBuilder sb, TUB_TOC_Html toc_table, short paperNo)
-        {
-            // 
-            sb.AppendLine("<!DOCTYPE html>");
-            sb.AppendLine("<html>");
-            sb.AppendLine("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=windows-1252\">");
-            sb.AppendLine($"<title>Paper {paperNo}</title>");
-            sb.AppendLine("<meta charset=\"utf-8\"> ");
-            sb.AppendLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> ");
-
-            // Bootstrap 5.2.0
-            sb.AppendLine(" <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css\" rel=\"stylesheet\">  ");
-            //sb.AppendLine("	<script src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js	\"></script>  ");
-            sb.AppendLine(" <script src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js\"></script> ");
-            sb.AppendLine(" <script src=\"https://cdn.jsdelivr.net/npm/jquery@3.6.1/dist/jquery.min.js\"></script>  ");
-            sb.AppendLine(" <link href=\"css/tub_pt_br.css\" rel=\"stylesheet\">   ");
-
-            //sb.AppendLine("	<link href=\"css/bstreeview.css\" rel=\"stylesheet\"> ");
-            //sb.AppendLine("	<script src=\"js/bstreeview.js\"></script> ");
-            //sb.AppendLine("	<script src=\"js/index.js\"></script> ");
-
-            sb.AppendLine("</head> ");
-            sb.AppendLine("<body> ");
-
-            sb.AppendLine(" ");
-            // font-awesome
-            //sb.AppendLine("	<link href=\"https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css\" rel=\"stylesheet\" ");
-            //sb.AppendLine("		  integrity=\"sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN\" crossorigin=\"anonymous\"> ");
-            //sb.AppendLine(" ");
-
-
-            sb.AppendLine($"<body class=\"{Param.BackTextColor}\">");
-            sb.AppendLine("<base target=\"_blank\"> ");
-            sb.AppendLine($"<div class=\"container-fluid mt-5 {Param.BackTextColor}\"> ");
-
-        }
-
-        private void PrintJumbotron(StringBuilder sb, string bookTitle, string bookSubTitle, short paperNo)
-        {
-            sb.AppendLine("<div class=\"container-fluid p-5 bg-primary text-white text-center\"> ");
-            sb.AppendLine($"    <h1>{bookTitle}</h1>  ");
-            sb.AppendLine($"    <p>{bookSubTitle}   {Link($"https://sxs.urantia.org/en/pt/papers/{paperNo:000}", "Urantia Foundation Multi Language")}</p>  ");
-            //sb.AppendLine("     <button class=\"btn btn-warning\" type=\"button\" data-bs-toggle=\"offcanvas\" data-bs-target=\"#offcanvasTUB\"> ");
-            //sb.AppendLine("     <button class=\"btn btn-warning\" type=\"button\" class=\"btn-close\">Print</button> ");
-            //sb.AppendLine("    Open Index ");
-            //sb.AppendLine("  </button> ");
-            sb.AppendLine("  </div> ");
-        }
-
-        private void PageEnd(StringBuilder sb, TUB_TOC_Html toc_table)
-        {
-            sb.AppendLine("</div>");
-            toc_table.JavaScript(sb);
-            sb.AppendLine("</BODY>");
-            sb.AppendLine("</HTML>");
-        }
-
+ 
         //private void PrintIndexOffCanvas(StringBuilder sb, List<BookIndex> list, short paperNo)
         //{
         //    sb.AppendLine("  <div class=\"offcanvas offcanvas-start\" id=\"offcanvasTUB\" data-bs-scroll=\"true\"> ");
