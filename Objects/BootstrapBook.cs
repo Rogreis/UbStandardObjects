@@ -5,8 +5,6 @@ using System.Text;
 namespace UbStandardObjects.Objects
 {
 
-    public delegate void dlShowMessage(string message);
-
     /// <summary>
     /// Generates a whole book using bootstrap
     /// </summary>

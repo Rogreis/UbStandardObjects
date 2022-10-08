@@ -133,23 +133,11 @@ namespace UbStandardObjects.Objects
             }
         }
 
-        public string Start()
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("<HTML>");
-            sb.AppendLine("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=windows-1252\">");
-            sb.AppendLine("<title>Urantia Book</title>");
-            javaScript(sb);
-            Styles(sb);
-            sb.AppendLine("<BODY>");
-            return sb.ToString();
-        }
 
-
-        public string End()
-        {
-            return "</BODY></HTML>";
-        }
+        //public string End()
+        //{
+        //    return "</BODY></HTML>";
+        //}
 
 
         /// <summary>

@@ -14,7 +14,7 @@ namespace UbStandardObjects.Objects
 
         public string TranslatorNote { get; set; }
 
-        public string Notes { get; set; }
+        public string Comment { get; set; }
 
         public DateTime LastDate { get; set; }
 
@@ -56,12 +56,27 @@ namespace UbStandardObjects.Objects
         public ParagraphMarkDown(string repositoryPath, string ident)
         {
             char[] sep = { '_' };
-            string[] parts = ident.Split(sep, StringSplitOptions.RemoveEmptyEntries);
+            string[] parts = ident.Remove(0,1).Split(sep, StringSplitOptions.RemoveEmptyEntries);
             Paper = Convert.ToInt16(parts[0]);
             Section = Convert.ToInt16(parts[1]);
             ParagraphNo = Convert.ToInt16(parts[2]);
             IsEditTranslation = true;
             string filePath = FullPath(repositoryPath, this);
+            Text = MarkdownToHtml(File.ReadAllText(filePath));
+        }
+
+
+        public ParagraphMarkDown(string repositoryPath, short paperNo, short sectionNo, short paragraphNo)
+        {
+            Paper = paperNo;
+            Section = sectionNo;
+            ParagraphNo = paragraphNo;
+            string filePath = FullPath(repositoryPath, this);
+            if (!File.Exists(filePath))
+            {
+                throw new Exception($"Paragraph does not exist: {paperNo} {sectionNo} {paragraphNo}");
+            }
+            IsEditTranslation = true;
             Text = MarkdownToHtml(File.ReadAllText(filePath));
         }
 
@@ -119,32 +134,32 @@ namespace UbStandardObjects.Objects
             if (note != null)
             {
                 TranslatorNote = note.TranslatorNote;
-                Notes = note.Notes;
+                Comment = note.Notes;
                 LastDate = note.LastDate;
                 _status = note.Status;
             }
             else
             {
                 TranslatorNote = "";
-                Notes = "";
+                Comment = "";
                 LastDate = DateTime.MinValue;
                 _status = 0;
             }
         }
 
 
-        public bool Save(string repositoryPath, string text, Note note)
+        public bool Save(string repositoryPath, string text)
         {
             try
             {
                 Text = text;
                 File.WriteAllText(FullPath(repositoryPath, this), text);
+                Notes.SaveNotes(this);
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
-                //return false;
             }
         }
 

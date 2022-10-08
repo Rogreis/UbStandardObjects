@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net.Sockets;
 using System.Text;
 using UbStandardObjects.Objects;
 using UBT_WebSite.Classes;
@@ -54,25 +55,6 @@ namespace UbStandardObjects.Objects
             sb.AppendLine("}  ");
         }
 
-        protected void javaScript(StringBuilder sb)
-        {
-            sb.AppendLine("<script> ");
-            sb.AppendLine(" ");
-            sb.AppendLine("function changeStyleHigh(id) {  ");
-            sb.AppendLine("  var el_up = document.getElementById(id);  ");
-            sb.AppendLine("  el_up.style[\"border\"] = '3px dotted #66FF33';");
-            sb.AppendLine("  el_up.style[\"mix-blend-mode\"] = 'difference';");
-            sb.AppendLine("}          ");
-            sb.AppendLine(" ");
-            sb.AppendLine("function changeStyleNormal(id) {  ");
-            sb.AppendLine("  var el_up = document.getElementById(id);  ");
-            sb.AppendLine("  el_up.style[\"border\"] = '0px';  ");
-            sb.AppendLine("}          ");
-            sb.AppendLine("        ");
-            sb.AppendLine("</script> ");
-            sb.AppendLine(" ");
-        }
-
         private void ItalicBoldStyles(StringBuilder sb)
         {
             sb.AppendLine("i, b, em  {  ");
@@ -122,6 +104,30 @@ namespace UbStandardObjects.Objects
             sb.AppendLine("} ");
         }
 
+
+
+
+
+        protected void javaScript(StringBuilder sb)
+        {
+            sb.AppendLine("<script> ");
+            sb.AppendLine(" ");
+            sb.AppendLine("function changeStyleHigh(id) {  ");
+            sb.AppendLine("  var el_up = document.getElementById(id);  ");
+            sb.AppendLine("  el_up.style[\"border\"] = '3px dotted #66FF33';");
+            sb.AppendLine("  el_up.style[\"mix-blend-mode\"] = 'difference';");
+            sb.AppendLine("}          ");
+            sb.AppendLine(" ");
+            sb.AppendLine("function changeStyleNormal(id) {  ");
+            sb.AppendLine("  var el_up = document.getElementById(id);  ");
+            sb.AppendLine("  el_up.style[\"border\"] = '0px';  ");
+            sb.AppendLine("}          ");
+            sb.AppendLine("        ");
+            sb.AppendLine("</script> ");
+            sb.AppendLine(" ");
+        }
+
+
         protected string statusStyleName(ParagraphStatus ParagraphStatus)
         {
             return "stPar" + ParagraphStatus.ToString();
@@ -145,83 +151,101 @@ namespace UbStandardObjects.Objects
             return TranslationTextDirection[2] ? " dir=\"rtl\"" : "";
         }
 
+        private void CssVariables(StringBuilder sb)
+        {
+            sb.AppendLine(":root { ");
+            sb.AppendLine("  --font: 'Roboto Serif Medium'; ");
+            sb.AppendLine("  --fontSize: 18px; ");
+            sb.AppendLine("} ");
+        }
+
         /// <summary>
         /// Create the styles for the page
         /// </summary>
         /// <param name="sb"></param>
         protected virtual void Styles(StringBuilder sb)
         {
-
-            float size = Param.FontSize;
-
             sb.AppendLine("<style type=\"text/css\">  ");
-            sb.AppendLine("  ");
 
-            // Body and Table
-            sb.AppendLine($"body {{font-family: {Param.FontFamily}; font-size: {size + 4}px; color: #000000;}}");
-            sb.AppendLine("table {  ");
-            sb.AppendLine("    border: 0px solid #CCC;  ");
-            sb.AppendLine("    border-collapse: collapse;  ");
+            CssVariables(sb);
+
+            string backColorCommon = "#262626";
+            string textColorCommon = "#FFFFFF";
+            string fontFamily = $"'{Param.FontFamilyInfo}'";
+            string fontSize = $"{Param.FontSize}px";
+
+            sb.AppendLine(".parStarted, .parWorking, .parDoubt, .parOk, .parClosed, .commonText ");
+            sb.AppendLine("{  ");
+            sb.AppendLine($" font-family: {fontFamily};  ");
+            sb.AppendLine($" font-size: {fontSize};  ");
+            sb.AppendLine(" text-align: justify;   ");
+            sb.AppendLine(" text-justify: inter-word; ");
+            sb.AppendLine(" padding: 10px;   ");
             sb.AppendLine("}  ");
-
-            sb.AppendLine($"td   {{font-family: {Param.FontFamily}; padding: 0px; font-size: {size}px; text-align: left; font-style: none; text-transform: none; font-weight: none; border: none;}}");
-            // 
-            // Sup
-            sb.AppendLine($"sup  {{font-size: {size - 1}px;  color: #666666;}}");
-
-
-            // Title
-            HeaderStyle(sb, 1, size + 6);
-            HeaderStyle(sb, 2, size + 4);
-            HeaderStyle(sb, 3, size + 2);
-
-
-            paragraphStyle(sb, ParagraphStatus.Started);
-            paragraphStyle(sb, ParagraphStatus.Working);
-            paragraphStyle(sb, ParagraphStatus.Doubt);
-            paragraphStyle(sb, ParagraphStatus.Ok);
-            paragraphStyle(sb, ParagraphStatus.Closed);
-
-            ItalicBoldStyles(sb);
-            sb.AppendLine("  ");
-
-            // Links
-            LinkStyles(sb);
-
             sb.AppendLine(" ");
 
-            // Italic
-            //sb.AppendLine($".ColItal {{font-family: {Param.FontFamily}; font-size: {size}px; color: #663333; font-style: italic;}}");
-            //sb.AppendLine(".Colored {font-family: " + Param.FontFamily + "; font-size: 14px; color: #663333;}");
-            //sb.AppendLine(".ppg     {font-family: " + Param.FontFamily + "; font-size: 9px;  color: #999999;  vertical-align:top;}");
-            //sb.AppendLine(".super   {font-family: " + Param.FontFamily + "; font-size: 9px;  color: #000000;  vertical-align:top;}");
+            sb.AppendLine($".commonText {{ background-color: {backColorCommon};  color: {textColorCommon}; }}");
+            sb.AppendLine(".parStarted { background-color: FloralWhite;  color: black; }");
+            sb.AppendLine(".parWorking { background-color: LemonChiffon;  color: black; }");
+            sb.AppendLine(".parDoubt { background-color: FireBrick;  color: white; }");
+            sb.AppendLine(".parOk { background-color: Aquamarine;  color: black; }");
+            sb.AppendLine(".parClosed { background-color: rgb(236, 236, 236);  color: rgb(111, 109, 109);; }");
+
+            sb.AppendLine("sup  {font-size: 9px;  color: #666666;}  ");
+
+            ItalicBoldStyles(sb);
+
+            sb.AppendLine("table {  ");
+            sb.AppendLine("    border: 0px solid;  ");
+            sb.AppendLine("    border-collapse: collapse;  ");
+            sb.AppendLine("}  ");
+            sb.AppendLine("td { padding: 15px; border: none;}");
 
             sb.AppendLine("</style>  ");
+
+            //ItalicBoldStyles(sb);
+            //sb.AppendLine("  ");
+
+            //// Links
+            //LinkStyles(sb);
+
+
         }
 
+        protected string ShowErrorMessage(string Message)
+        {
+            return "<P>" + Message + "</P>";
+        }
 
-
-        //protected virtual string statusBackgroundColor(ParagraphStatus ParagraphStatus)
-        //{
-        //    return Param.BackgroundParagraphColor(ParagraphStatus);
-        //}
-
-
-
-
+        protected Paper GetPaper(short paperNo, Translation translation)
+        {
+            return translation.Paper(paperNo);
+        }
 
         #endregion
 
 
         #region Html Start and End
-        protected void pageStart(StringBuilder sb, int paperNo, bool compareStyles = false)
+        protected virtual void pageStart(StringBuilder sb, int paperNo, bool compareStyles = false)
         {
-            sb.AppendLine("<HTML>");
-            sb.AppendLine("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=windows-1252\">");
-            sb.AppendLine("<title>Paper " + paperNo.ToString() + "</title>");
-            javaScript(sb);
+            sb.AppendLine("<!DOCTYPE html>  ");
+            sb.AppendLine("<html>  ");
+            sb.AppendLine("  ");
+            sb.AppendLine("<head>   ");
+            sb.AppendLine("    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=windows-1252\">  ");
+            sb.AppendLine($"    <title>Paper {paperNo}</title>  ");
+            sb.AppendLine("    <meta charset=\"utf-8\">   ");
+            sb.AppendLine("    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">   ");
+            sb.AppendLine("    <link href=\"css/bootstrap.min.css\" rel=\"stylesheet\">    ");
+
             Styles(sb);
-            sb.AppendLine("<BODY>");
+
+            sb.AppendLine(" ");
+            sb.AppendLine("</head>   ");
+            sb.AppendLine("  ");
+            sb.AppendLine("<body class=\"commonText\" \">   ");
+            sb.AppendLine("<div class=\"container-fluid mt-5 commonText\">    ");
+
         }
 
         protected void pageEnd(StringBuilder sb)
@@ -236,29 +260,10 @@ namespace UbStandardObjects.Objects
         #region Working with DIV's
         protected string DivName(Paragraph p)
         {
-            if (p.TranslationId == TranslationIdLeft)
-            {
-                return $"divl{p.ParaIdent}";
-            }
-            if (p.TranslationId == TranslationIdMiddle)
-            {
-                return $"divm{p.ParaIdent}";
-            }
-            if (p.TranslationId == TranslationIdRight)
-            {
-                return $"divr{p.ParaIdent}";
-            }
-            return $"divc{p.ParaIdent}";
+            return $"id=\"divr{p.ParaIdent}\"";
         }
 
-        /*
-        <td width= "33.33%" valign="top"><div id="divl120001" ><p><h2> The Bestowal of Michael on Urantia</p></h2></div></td>
-        <td width= "33.33%" valign="top"><div id="divl120001" ><p><h2> El otorgamiento de Miguel en Urantia</p></h2></div></td>
-        <td width= "33.33%" valign="top"><div id="divl120000" ><a href="about:ident" ident="120:0-0 (0.0)"><h2> A DOAÇÃO DE MICHAEL EM URÂNTIA</a></h2></div></td>
-         * */
-
-
-        protected virtual string makeDIV(Paragraph p, bool selected = false, bool outputAsLink= false)
+        protected virtual string makeDIV(Paragraph p, bool selected = false, bool outputAsLink = false)
         {
             string TextClass = (selected) ? "class=\"" + statusStyleHighlightedName(p.Status) + "\"" : "class=\"" + statusStyleName(p.Status) + "\"";
             string textDirection = TextDirection(p);
@@ -280,33 +285,53 @@ namespace UbStandardObjects.Objects
                     closeStyle = "</h3>";
                     break;
                 case ParagraphHtmlType.NormalParagraph:
-                    openStyle = $"<p>{p.Identification}";
-                    closeStyle = "</p>";
+                    openStyle = $"{p.Identification}";
+                    closeStyle = "";
                     break;
                 case ParagraphHtmlType.IdentedParagraph:
-                    openStyle = $"<p><bloquote>{p.Identification}";
-                    closeStyle = "</bloquote></p>";
+                    openStyle = $"<bloquote>{p.Identification}";
+                    closeStyle = "</bloquote>";
                     break;
             }
 
-            string htmlLink = "";
-            if (outputAsLink)
+            return $"<div {textDirection}>{openStyle} {p.Text}{closeStyle}</div>";
+        }
+
+
+        protected virtual string makeEditDIV(Paragraph p)
+        {
+            string textDirection = TextDirection(p);
+
+            // Define div name
+            string openStyle = "", closeStyle = "";
+            switch (p.Format)
             {
-                htmlLink = $"<a href=\"about:ident\" ident=\"{p.Identification}\">{openStyle} {p.Text}</a>";
-            }
-            else
-            {
-                htmlLink = $"<p>{openStyle} {p.Text}</p>";
+                case ParagraphHtmlType.BookTitle:
+                    openStyle = "<h1>";
+                    closeStyle = "</h1>";
+                    break;
+                case ParagraphHtmlType.PaperTitle:
+                    openStyle = "<h2>";
+                    closeStyle = "</h2>";
+                    break;
+                case ParagraphHtmlType.SectionTitle:
+                    openStyle = "<h3>";
+                    closeStyle = "</h3>";
+                    break;
+                case ParagraphHtmlType.NormalParagraph:
+                    openStyle = $"{p.Identification}";
+                    closeStyle = "";
+                    break;
+                case ParagraphHtmlType.IdentedParagraph:
+                    openStyle = $"<bloquote>{p.Identification}";
+                    closeStyle = "</bloquote>";
+                    break;
             }
 
-            return $"<div id=\"{DivName(p)}\" {textDirection}>{htmlLink}{closeStyle}</div>";
+            return $"<div id=\"{DivName(p)}\" class=\"{statusStyleName(p.Status)}\" {textDirection}><a href=\"about:ident\" ident=\"{p.AName}\" class=\"{statusStyleName(p.Status)}\">{p.Identification}</a>{openStyle} {p.Text}{closeStyle}</div>";
         }
         #endregion
 
-        protected string ShowErrorMessage(string Message)
-        {
-            return "<P>" + Message + "</P>";
-        }
 
 
         #region Private format routines
@@ -357,7 +382,7 @@ namespace UbStandardObjects.Objects
                     }
                     if (leftTranslation != null)
                     {
-                        sb.AppendLine("<td width= \"" + percent.ToString("0.00") + "%\" valign=\"top\">" + makeDIV(leftTranslation[i], false, true) + "</td>");
+                        sb.AppendLine("<td width= \"" + percent.ToString("0.00") + "%\" valign=\"top\">" + makeEditDIV(leftTranslation[i]) + "</td>");
                     }
                     if (showCompare)
                     {
@@ -379,10 +404,6 @@ namespace UbStandardObjects.Objects
 
         #endregion
 
-        protected Paper GetPaper(short paperNo, Translation translation)
-        {
-            return translation.Paper(paperNo);
-        }
 
         /// <summary>
         /// Generatre an html page with 1, 2 or 3 text columns
@@ -446,6 +467,16 @@ namespace UbStandardObjects.Objects
             pageEnd(sb);
             return sb.ToString();
         }
+
+        public string FormatParagraph(Paragraph p)
+        {
+            StringBuilder sb = new StringBuilder();
+            pageStart(sb, 1, true);
+            sb.AppendLine($"<p>{p.Text}</p>");
+            pageEnd(sb);
+            return sb.ToString();
+        }
+
 
         public string HtmlCompare(string textOld, string textNew)
         {

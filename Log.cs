@@ -5,8 +5,6 @@ namespace UbStandardObjects
 
 	public abstract class Log
 	{
-		public event ShowMessage ShowMessage = null;
-
 		public abstract void Initialize(string path, bool append = false);
 
 		public abstract void Clear();
@@ -39,7 +37,7 @@ namespace UbStandardObjects
 
 		protected void FireShowMessage(string message, bool isError = false, bool isFatal = false)
         {
-			ShowMessage?.Invoke(message, isError, isFatal);
+			StaticObjects.FireSendMessage(message, isError, isFatal);
 		}
 
 	}

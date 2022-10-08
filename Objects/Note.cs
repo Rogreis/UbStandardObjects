@@ -23,45 +23,77 @@ namespace UbStandardObjects.Objects
     }
 
 
-    public class Notes
+    public static class Notes
     {
         private class NotesRoot
         {
             public Note[] Notes { get; set; }
         }
 
-        private List<Note> ListNotes = null;
-
-        private string RepositoryFolder = null;
-
-        public Notes(string repositoryFolder)
+        private static JsonSerializerOptions Options = new JsonSerializerOptions
         {
-            RepositoryFolder = repositoryFolder;
+            AllowTrailingCommas = true,
+            WriteIndented = true,
+        };
+
+
+        private static string RepositoryNotesPath(short paperNo)
+        {
+            return Path.Combine(StaticObjects.Parameters.EditParagraphsRepositoryFolder, $@"{ParagraphMarkDown.FolderPath(paperNo)}\Notes.json");
         }
 
-        private void GetNotes(short paperNo)
+
+        private static List<Note> GetNotes(short paperNo)
         {
-            string filePath = Path.Combine(RepositoryFolder, $@"{ParagraphMarkDown.FolderPath(paperNo)}\Notes.json");
-            string jsonString = File.ReadAllText(filePath);
-            var options = new JsonSerializerOptions
+            string jsonString = File.ReadAllText(RepositoryNotesPath(paperNo));
+            NotesRoot root = JsonSerializer.Deserialize<NotesRoot>(jsonString, Options);
+            if (root == null)
             {
-                AllowTrailingCommas = true,
-                WriteIndented = true,
-            };
-            NotesRoot root = JsonSerializer.Deserialize<NotesRoot>(jsonString, options);
-            if (root != null)
+                throw new Exception($"Could not get notes for paper {paperNo}");
+            }
+            return new List<Note>(root.Notes);
+        }
+
+        public static Note GetNote(Paragraph p)
+        {
+            List<Note> list = GetNotes(p.Paper);
+            Note note = list.Find(n => n.Paper == p.Paper && n.Section == p.Section && n.Paragraph == p.ParagraphNo);
+            if (note == null)
             {
-                ListNotes = new List<Note>(root.Notes);
+                throw new Exception($"Could not get note for Paragraph {p}");
+            }
+            return note;
+        }
+
+        public static void SaveNotes(ParagraphMarkDown p)
+        {
+            try
+            {
+                List<Note> list = GetNotes(p.Paper);
+                Note note = list.Find(n => n.Paper == p.Paper && n.Section == p.Section && n.Paragraph == p.ParagraphNo);
+                if (note == null)
+                {
+                    throw new Exception($"Could not get note for Paragraph {p}");
+                }
+
+                note.TranslatorNote= p.TranslatorNote;
+                note.Status = (short)p._status;
+                note.Notes= p.Comment;
+                note.LastDate= DateTime.Now.ToUniversalTime();
+                note.Format = (short)p.FormatInt;
+
+                NotesRoot root = new NotesRoot();
+                root.Notes = list.ToArray();
+                string jsonString = JsonSerializer.Serialize<NotesRoot>(root, Options);
+                File.WriteAllText(RepositoryNotesPath(p.Paper), jsonString);
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
 
-        public Note GetNote(Paragraph p)
-        {
-            if (ListNotes == null || ListNotes[0].Paper != p.Paper)
-            {
-                GetNotes(p.Paper);
-            }
-            return ListNotes.Find(n => n.Paper == p.Paper && n.Section == p.Section && n.Paragraph == p.ParagraphNo);
-        }
+
+
     }
 }

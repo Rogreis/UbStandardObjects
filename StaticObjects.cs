@@ -1,15 +1,20 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.Net.NetworkInformation;
+using System.Text.Json;
 using UbStandardObjects.Objects;
 
 namespace UbStandardObjects
 {
-	public delegate void ShowMessage(string message, bool isError = false, bool isFatal = false);
+	public delegate void dlShowMessage(string message, bool isError = false, bool isFatal = false);
 
-	public delegate void ShowStatusMessage(string message);
+    public delegate void dlShowExceptionMessage(string message, Exception ex, bool isFatal = false);
+    
+    public delegate void ShowStatusMessage(string message);
 
 	public delegate void ShowPaperNumber(short paperNo);
 
-	public static class StaticObjects
+
+    public static class StaticObjects
 	{
 		/// <summary>
 		/// Control file name for different translations versions
@@ -24,6 +29,23 @@ namespace UbStandardObjects
 		public static Parameters Parameters { get; set; }
 
 		public static Book Book { get; set; } = null;
+
+        #region events
+
+        public static event dlShowMessage ShowMessage= null;
+        public static event dlShowExceptionMessage ShowExceptionMessage = null;
+
+        public static void FireSendMessage(string message, bool isError = false, bool isFatal = false)
+        {
+            ShowMessage?.Invoke(message, isError, isFatal);
+        }
+
+        public static void FireShowExceptionMessage(string message, Exception ex, bool isFatal = false)
+        {
+            ShowExceptionMessage?.Invoke(message, ex, isFatal);
+        }
+
+        #endregion
 
         /// <summary>
         /// Serialize an object to string using json

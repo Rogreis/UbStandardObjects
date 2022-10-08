@@ -65,6 +65,10 @@ namespace UbStandardObjects.Objects
             {
                 return (ParagraphStatus)_status;
             }
+            set
+            {
+                _status = (int)value;
+            }
         }
 
 

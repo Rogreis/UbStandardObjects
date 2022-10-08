@@ -15,13 +15,11 @@ namespace UbStandardObjects.Objects
 
         private string RepositoryFolder { get; set; } = "";
         private short paperEditNo = -1;
-        private Notes NotesObject = null;
 
-        public PaperEdit(Notes notes, short paperNo, string repositoryFolder)
+        public PaperEdit(short paperNo, string repositoryFolder)
         {
-            NotesObject = notes;    
             paperEditNo = paperNo;
-            RepositoryFolder = repositoryFolder;
+            RepositoryFolder = Path.Combine(repositoryFolder, $"Doc{paperNo:000}");
             GetParagraphsFromRepository();
         }
 
@@ -63,9 +61,9 @@ namespace UbStandardObjects.Objects
         /// Get all availble notes data
         /// </summary>
         /// <param name="paragraph"></param>
-        private void GetNotesData(ParagraphMarkDown paragraph)
+        public void GetNotesData(ParagraphMarkDown paragraph)
         {
-            Note note = NotesObject.GetNote(paragraph);
+            Note note = Notes.GetNote(paragraph);
             paragraph.SetNote(note);
         }
 
