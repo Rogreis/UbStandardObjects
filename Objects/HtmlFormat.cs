@@ -31,6 +31,10 @@ namespace UbStandardObjects.Objects
         // By default all 3 translations are not right to left written
         protected bool[] TranslationTextDirection = { RightToLeft, RightToLeft, RightToLeft };
 
+        // Padding information
+        protected int ParagraphPadding = 10;
+        protected int CellPadding = 15;
+
 
         public HtmlFormat(Parameters parameters)
         {
@@ -159,6 +163,7 @@ namespace UbStandardObjects.Objects
             sb.AppendLine("} ");
         }
 
+
         /// <summary>
         /// Create the styles for the page
         /// </summary>
@@ -180,7 +185,7 @@ namespace UbStandardObjects.Objects
             sb.AppendLine($" font-size: {fontSize};  ");
             sb.AppendLine(" text-align: justify;   ");
             sb.AppendLine(" text-justify: inter-word; ");
-            sb.AppendLine(" padding: 10px;   ");
+            sb.AppendLine($" padding: {ParagraphPadding}px;   ");
             sb.AppendLine("}  ");
             sb.AppendLine(" ");
 
@@ -199,7 +204,7 @@ namespace UbStandardObjects.Objects
             sb.AppendLine("    border: 0px solid;  ");
             sb.AppendLine("    border-collapse: collapse;  ");
             sb.AppendLine("}  ");
-            sb.AppendLine("td { padding: 15px; border: none;}");
+            sb.AppendLine($"td {{ padding: {CellPadding}px; border: none;}}");
 
             sb.AppendLine("</style>  ");
 
@@ -420,8 +425,8 @@ namespace UbStandardObjects.Objects
             Paper rightPaper = null, middlePaper = null, leftPaper = null;
             TranslationIdRight = TranslationIdMiddle = TranslationIdLeft = Translation.NoTranslation;
             TranslationTextDirection[0] = TranslationTextDirection[1] = TranslationTextDirection[2] = false;
-            List<Paragraph> rightParagraphs = null; 
-            List<Paragraph> middleParagraphs = null; 
+            List<Paragraph> rightParagraphs = null;
+            List<Paragraph> middleParagraphs = null;
             List<Paragraph> leftParagraphs = null;
 
             // Current values
@@ -471,6 +476,8 @@ namespace UbStandardObjects.Objects
         public string FormatParagraph(Paragraph p)
         {
             StringBuilder sb = new StringBuilder();
+            ParagraphPadding = 1;
+            CellPadding = 5;
             pageStart(sb, 1, true);
             sb.AppendLine($"<p>{p.Text}</p>");
             pageEnd(sb);
