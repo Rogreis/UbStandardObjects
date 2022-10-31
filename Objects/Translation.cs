@@ -162,7 +162,7 @@ namespace UbStandardObjects.Objects
         public int GetFormat(Paragraph par)
         {
             Paper paper = Paper(par.Paper);
-            Paragraph parFound= paper.Paragraphs.Find(p => p.Section == par.Section && p.ParagraphNo == par.ParagraphNo);
+            Paragraph parFound = paper.Paragraphs.Find(p => p.Section == par.Section && p.ParagraphNo == par.ParagraphNo);
             return parFound.FormatInt;
         }
 
@@ -180,10 +180,12 @@ namespace UbStandardObjects.Objects
             Annotations.Add(annotation);
         }
 
+
         public override string ToString()
         {
             return LanguageID.ToString() + " - " + Description;
         }
+
 
     }
 

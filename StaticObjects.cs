@@ -21,10 +21,14 @@ namespace UbStandardObjects
 		/// </summary>
 		public const string ControlFileName = "UbControlFile.json";
 
-		/// <summary>
-		/// This is the object to store log
-		/// </summary>
-		public static Log Logger { get; set; }
+        public static string PathParameters { get; set; } = "";
+
+        public static string PathLog { get; set; } = "";
+
+        /// <summary>
+        /// This is the object to store log
+        /// </summary>
+        public static Log Logger { get; set; }
 
 		public static Parameters Parameters { get; set; }
 

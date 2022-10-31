@@ -44,7 +44,7 @@ namespace UbStandardObjects.Objects
             return "stParHigh" + ParagraphStatus.ToString();
         }
 
-        private void paragraphStyle(StringBuilder sb, ParagraphStatus paragraphStatus)
+        protected virtual void paragraphStyle(StringBuilder sb, ParagraphStatus paragraphStatus)
         {
             sb.AppendLine("." + statusStyleName(paragraphStatus));
             sb.AppendLine("{  ");
@@ -108,7 +108,7 @@ namespace UbStandardObjects.Objects
 
 
 
-        protected void javaScript(StringBuilder sb)
+        protected virtual void javaScript(StringBuilder sb)
         {
             sb.AppendLine("<script> ");
             sb.AppendLine(" ");
@@ -128,7 +128,7 @@ namespace UbStandardObjects.Objects
         }
 
 
-        protected string statusStyleName(ParagraphStatus ParagraphStatus)
+        protected virtual string statusStyleName(ParagraphStatus ParagraphStatus)
         {
             return "stPar" + ParagraphStatus.ToString();
         }
@@ -258,7 +258,7 @@ namespace UbStandardObjects.Objects
 
 
         #region Working with DIV's
-        protected string DivName(Paragraph p)
+        protected virtual string DivName(Paragraph p)
         {
             return $"id=\"divr{p.ParaIdent}\"";
         }

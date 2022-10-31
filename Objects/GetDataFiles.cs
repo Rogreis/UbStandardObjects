@@ -255,13 +255,15 @@ namespace UbStandardObjects.Objects
         /// </summary>
         /// <param name="translatioId"></param>
         /// <returns></returns>
-        public virtual Translation GetTranslation(short translatioId)
+        public virtual Translation GetTranslation(short translatioId, bool initializePapers= true)
         {
             Translation translation = StaticObjects.Book.GetTranslation(translatioId);
             if (translation == null)
             {
                 translation = new Translation();
             }
+            if (!initializePapers) return translation;
+
             if (translation.Papers.Count > 0)
             {
                 return translation;

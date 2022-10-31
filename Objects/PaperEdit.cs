@@ -19,7 +19,7 @@ namespace UbStandardObjects.Objects
         public PaperEdit(short paperNo, string repositoryFolder)
         {
             paperEditNo = paperNo;
-            RepositoryFolder = Path.Combine(repositoryFolder, $"Doc{paperNo:000}");
+            RepositoryFolder = repositoryFolder;
             GetParagraphsFromRepository();
         }
 
@@ -28,7 +28,7 @@ namespace UbStandardObjects.Objects
         /// </summary>
         private void GetParagraphsFromRepository()
         {
-            foreach (string pathParagraphFile in Directory.GetFiles(RepositoryFolder, $"Par_{paperEditNo:000}_*.md"))
+            foreach (string pathParagraphFile in Directory.GetFiles(RepositoryFolder, $@"Doc{paperEditNo:000}\Par_{paperEditNo:000}_*.md"))
             {
                 Paragraphs.Add(new ParagraphMarkDown(pathParagraphFile));
             }
@@ -74,15 +74,14 @@ namespace UbStandardObjects.Objects
         /// <returns></returns>
         public override Paragraph GetParagraph(TOC_Entry entry)
         {
-            if (Paragraphs.Count == 0)
-            {
-                GetParagraphsFromRepository();
-            }
-            ParagraphMarkDown par = (ParagraphMarkDown)Paragraphs.Find(p => p.Section == entry.Section && p.ParagraphNo == entry.ParagraphNo);
-            if (par == null)
-            {
-                throw new Exception($"Paragraph not found for {entry}");
-            }
+            //if (Paragraphs.Count == 0)
+            //{
+            //    GetParagraphsFromRepository();
+            //}
+            // Always get the paragraph from repository
+            string filePath = ParagraphMarkDown.FullPath(RepositoryFolder, entry.Paper, entry.Section, entry.ParagraphNo);
+            if (!File.Exists(filePath)) return null;
+            ParagraphMarkDown par = new ParagraphMarkDown(filePath);
             GetNotesData(par);
             return par;
         }

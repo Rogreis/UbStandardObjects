@@ -23,7 +23,10 @@ namespace UbStandardObjects
 
 		public abstract void ShowLog();
 
-		public void IsNull(object obj, string message)
+		public abstract void Close();
+
+
+        public void IsNull(object obj, string message)
 		{
 			if (obj == null)
 				FatalError(message);

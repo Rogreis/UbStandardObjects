@@ -35,6 +35,11 @@ namespace UbStandardObjects.Objects
             return $@"Doc{p.Paper:000}\Par_{p.Paper:000}_{p.Section:000}_{p.ParagraphNo:000}.md";
         }
 
+        public static string FullPath(string repositoryPath, short paperNo, short sectionNo, short paragraphNo)
+        {
+            return Path.Combine(repositoryPath, $@"Doc{paperNo:000}\Par_{paperNo:000}_{sectionNo:000}_{paragraphNo:000}.md");
+            //return Path.Combine(repositoryPath, $@"Par_{paperNo:000}_{sectionNo:000}_{paragraphNo:000}.md");
+        }
 
         public static string FullPath(string repositoryPath, Paragraph p)
         {
@@ -148,12 +153,23 @@ namespace UbStandardObjects.Objects
         }
 
 
-        public bool Save(string repositoryPath, string text)
+        public bool SaveText(string repositoryPath)
         {
             try
             {
-                Text = text;
-                File.WriteAllText(FullPath(repositoryPath, this), text);
+                File.WriteAllText(FullPath(repositoryPath, this), Text);
+                return true;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public bool SaveNotes(string repositoryPath)
+        {
+            try
+            {
                 Notes.SaveNotes(this);
                 return true;
             }

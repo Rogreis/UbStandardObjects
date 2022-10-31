@@ -108,7 +108,7 @@ namespace UbStandardObjects.Objects
         {
             get
             {
-                return string.Format($"{Paper}:{Section}-{ParagraphNo})");
+                return string.Format($"{Paper}:{Section}-{ParagraphNo}");
             }
         }
 
