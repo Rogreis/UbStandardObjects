@@ -485,6 +485,32 @@ namespace UbStandardObjects.Objects
         }
 
 
+        public string FormatParagraph(Paragraph pLeft, Paragraph pMiddle, Paragraph pRight, bool showCompare= false)
+        {
+            // Column percent value
+            percent = 100.0 / (showCompare? 4 : 3);
+
+            StringBuilder sb = new StringBuilder();
+            ParagraphPadding = 1;
+            CellPadding = 5;
+
+            pageStart(sb, pLeft.Paper, false);
+            sb.AppendLine("<table border=\"1\" width=\"100%\" id=\"table1\" cellspacing=\"4\" cellpadding=\"0\">");
+            sb.AppendLine("<tr>");
+            sb.AppendLine("<td width= \"" + percent.ToString("0.00") + "%\" valign=\"top\">" + makeDIV(pLeft) + "</td>");
+            sb.AppendLine("<td width= \"" + percent.ToString("0.00") + "%\" valign=\"top\">" + makeDIV(pMiddle) + "</td>");
+            sb.AppendLine("<td width= \"" + percent.ToString("0.00") + "%\" valign=\"top\">" + makeEditDIV(pRight) + "</td>");
+            if (showCompare)
+            {
+                //sb.AppendLine("<td width= \"" + percent.ToString("0.00") + "%\" valign=\"top\">" + HtmlCompare(p, FullPaperCompareTranslation.Middle) + "</td>");
+            }
+            sb.AppendLine("</tr>");
+            sb.AppendLine("</table>");
+            pageEnd(sb);
+            return sb.ToString();
+        }
+
+
         public string HtmlCompare(string textOld, string textNew)
         {
             try

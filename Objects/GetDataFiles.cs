@@ -86,47 +86,6 @@ namespace UbStandardObjects.Objects
         #endregion
 
 
-        /// <summary>
-        /// Get all papers from the zipped file
-        /// </summary>
-        /// <param name="translationId"></param>
-        /// <param name="isZip"></param>
-        /// <returns></returns>
-        protected string GetFile(short translationId, bool isZip = true)
-        {
-            try
-            {
-                string json = "";
-                string translationJsonFilePath = TranslationJsonFilePath(translationId);
-                if (File.Exists(translationJsonFilePath))
-                {
-                    json = File.ReadAllText(translationJsonFilePath);
-                    return json;
-                }
-
-                string translationStartupPath = TranslationFilePath(translationId);
-                if (File.Exists(translationStartupPath))
-                {
-                    StaticObjects.Logger.Info("File exists: " + translationStartupPath);
-                    byte[] bytes = File.ReadAllBytes(translationStartupPath);
-                    json = BytesToString(bytes, isZip);
-                    File.WriteAllText(translationJsonFilePath, json);
-                    return json;
-                }
-                else
-                {
-                    StaticObjects.Logger.Error($"Translation not found {translationId}");
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                StaticObjects.Logger.Error("GetFile", ex);
-                return null;
-            }
-        }
-
-
 
         /// <summary>
         /// Get public data from github
@@ -238,6 +197,47 @@ namespace UbStandardObjects.Objects
         #endregion
 
 
+        /// <summary>
+        /// Get all papers from the zipped file
+        /// </summary>
+        /// <param name="translationId"></param>
+        /// <param name="isZip"></param>
+        /// <returns></returns>
+        protected string GetFile(short translationId, bool isZip = true)
+        {
+            try
+            {
+                string json = "";
+
+                string translationJsonFilePath = TranslationJsonFilePath(translationId);
+                if (File.Exists(translationJsonFilePath))
+                {
+                    json = File.ReadAllText(translationJsonFilePath);
+                    return json;
+                }
+
+                string translationStartupPath = TranslationFilePath(translationId);
+                if (File.Exists(translationStartupPath))
+                {
+                    StaticObjects.Logger.Info("File exists: " + translationStartupPath);
+                    byte[] bytes = File.ReadAllBytes(translationStartupPath);
+                    json = BytesToString(bytes, isZip);
+                    File.WriteAllText(translationJsonFilePath, json);
+                    return json;
+                }
+                else
+                {
+                    StaticObjects.Logger.Error($"Translation not found {translationId}");
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                StaticObjects.Logger.Error("GetFile", ex);
+                return null;
+            }
+        }
+
 
         /// <summary>
         /// Get the translations list from a local file
@@ -253,28 +253,48 @@ namespace UbStandardObjects.Objects
         /// <summary>
         /// Get a translation from a local file
         /// </summary>
-        /// <param name="translatioId"></param>
+        /// <param name="translationId"></param>
         /// <returns></returns>
-        public virtual Translation GetTranslation(short translatioId, bool initializePapers= true)
+        public virtual Translation GetTranslation(short translationId, bool initializePapers= true)
         {
-            Translation translation = StaticObjects.Book.GetTranslation(translatioId);
+            Translation translation = StaticObjects.Book.GetTranslation(translationId);
             if (translation == null)
             {
                 translation = new Translation();
             }
+
             if (!initializePapers) return translation;
 
             if (translation.Papers.Count > 0)
             {
                 return translation;
             }
-            string json = GetFile(translatioId, true);
-            translation.GetData(json);
 
-            // Loading annotations
-            translation.Annotations = null;
+            // FIX ME: IsEditingTranslation is hard codded here, but needs to be 
+            if (translationId == 2)
+            {
+                TranslationEdit translatioEdit= translation as TranslationEdit;
+                if (translatioEdit == null)
+                {
+                    StaticObjects.Book.Translations.Remove(translation);
+                    translatioEdit = new TranslationEdit(translation, StaticObjects.Parameters.EditParagraphsRepositoryFolder);
+                    StaticObjects.Book.Translations.Add(translatioEdit);
+                }
+                translatioEdit.IsEditingTranslation = true;
+                translatioEdit.Annotations = null;
+                return translation;
+            }
+            else
+            {
+                string json = GetFile(translationId, true);
+                translation.GetData(json);
 
-            return translation;
+                // Loading annotations
+                translation.Annotations = null;
+                return translation;
+            }
+
+
         }
 
         /// <summary>

@@ -25,6 +25,7 @@ namespace UbStandardObjects.Objects
         public int StartingYear { get; set; }
         public int EndingYear { get; set; }
         public string PaperTranslation { get; set; }
+        public bool IsEditingTranslation { get; set; } = false;
 
         public List<Paper> Papers { get; set; } = new List<Paper>();
 
