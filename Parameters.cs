@@ -198,7 +198,7 @@ namespace UbStandardObjects
 
         public virtual string BackgroundParagraphColor(ParagraphStatus ParagraphStatus)
 		{
-			return IsDarkTheme ? darkTheme : lightTheme;
+            return IsDarkTheme ? darkTheme : lightTheme;
         }
 
     }

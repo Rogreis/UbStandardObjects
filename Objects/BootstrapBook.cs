@@ -16,8 +16,6 @@ namespace UbStandardObjects.Objects
         {
         }
 
-
-
         private string Link(string href, string text)
         {
             return $"<a class=\"page-link\" href=\"{href}\">{text}</a>";
@@ -25,13 +23,13 @@ namespace UbStandardObjects.Objects
 
         private string IdentLink(Paragraph p)
         {
-            //string href = $"https://github.com/Rogreis/PtAlternative/blob/correcoes/Doc{p.Paper:000}/Par_{p.Paper:000}_{p.Section:000}_{p.ParagraphNo:000}.md";
-            //return $"<a href=\"{href}\" class=\"{Param.ParagraphClass(p)}\">{p.Identification}</a>";
-            string href = $"javascript:openEdit('{p.Paper};{p.Section};{p.ParagraphNo};');";
-            return $"<a href=\"{href}\" class=\"{Param.BackgroundParagraphColor(p.Status)}\">{p.Identification}</a>";
+            string href = $"https://github.com/Rogreis/PtAlternative/blob/correcoes/Doc{p.Paper:000}/Par_{p.Paper:000}_{p.Section:000}_{p.ParagraphNo:000}.md";
+            return $"<a href=\"{href}\" class=\"{Param.ParagraphClass(p)}\">{p.Identification}</a>";
+            //string href = $"javascript:openEdit('{p.Paper};{p.Section};{p.ParagraphNo};');";
+            //return $"<a href=\"{href}\" class=\"{Param.BackgroundParagraphColor(p.Status)}\">{p.Identification}</a>";
         }
 
- 
+
         //private void PrintIndexOffCanvas(StringBuilder sb, List<BookIndex> list, short paperNo)
         //{
         //    sb.AppendLine("  <div class=\"offcanvas offcanvas-start\" id=\"offcanvasTUB\" data-bs-scroll=\"true\"> ");
@@ -120,6 +118,12 @@ namespace UbStandardObjects.Objects
         }
 
 
+        protected void FireSendMessage(string message)
+        {
+            ShowMessage?.Invoke(message);
+        }
+
+
         protected void MakeColumn(StringBuilder sb, Paragraph p)
         {
             string textDirection = TextDirection(p);
@@ -136,20 +140,33 @@ namespace UbStandardObjects.Objects
         {
             string textDirection = TextDirection(p);
             string divId = $"d{p.Paper}_{p.Section}_{p.ParagraphNo}";
+            string htmlClass = p.IsEditTranslation ? Param.ParagraphClass(p) : Param.BackgroundParagraphColor(p.Status);
             sb.AppendLine($"   <td{textDirection}>");
-            sb.AppendLine($"      <div id=\"{divId}\" class=\"p-3 mb-2 {Param.BackgroundParagraphColor(p.Status)}\">");
+            sb.AppendLine($"      <div id=\"{divId}\" class=\"p-3 mb-2 {htmlClass}\">");
             sb.AppendLine($"          {PrintText(p, true, true)}");
             sb.AppendLine($"      <div>");
             sb.AppendLine($"   </td>");
         }
 
-        private void PrintLine(StringBuilder sb, Paragraph pLeft, Paragraph pRight)
+        public void Test()
+        {
+            PaperEdit paper = new PaperEdit(1, Param.EditParagraphsRepositoryFolder);
+            StringBuilder sb = new StringBuilder();
+            Paragraph p = paper.Paragraphs[3];
+            MakeColumnWithDiv(sb, p);
+            //string s = sb.ToString();
+        }
+
+
+        protected void PrintLine(StringBuilder sb, Paragraph pLeft, Paragraph pRight)
         {
             sb.AppendLine("<tr>");
             MakeColumn(sb, pLeft);
             MakeColumnWithDiv(sb, pRight);
             sb.AppendLine("</tr>");
         }
+
+
 
         ///// <summary>
         ///// Main page structure
@@ -233,7 +250,7 @@ namespace UbStandardObjects.Objects
         /// <param name="leftPaper"></param>
         /// <param name="rightPaper"></param>
         /// <param name="toc_table"></param>
-        private void PrintPaperForGitHubWebSite(string destinationFolder, short paperNo, Paper leftPaper, Paper rightPaper, TUB_TOC_Html toc_table)
+        protected void PrintPaperForGitHubWebSite(string destinationFolder, short paperNo, Paper leftPaper, Paper rightPaper, TUB_TOC_Html toc_table)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -284,7 +301,7 @@ namespace UbStandardObjects.Objects
 
 
 
-        public void GeneratePaper(string destinationFolder, Translation leftTranslation, Paper rightPaper, TUB_TOC_Html toc_table, short paperNo)
+        public virtual void GeneratePaper(string destinationFolder, Translation leftTranslation, Paper rightPaper, TUB_TOC_Html toc_table, short paperNo)
         {
             try
             {
@@ -299,7 +316,7 @@ namespace UbStandardObjects.Objects
                 }
 
                 leftPaper = GetPaper(paperNo, leftTranslation);
-                ShowMessage?.Invoke(leftPaper.ToString());
+                FireSendMessage(leftPaper.ToString());
                 PrintPaperForGitHubWebSite(destinationFolder, paperNo, leftPaper, rightPaper, toc_table);
 
             }

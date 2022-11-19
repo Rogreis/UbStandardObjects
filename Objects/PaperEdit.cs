@@ -15,11 +15,20 @@ namespace UbStandardObjects.Objects
 
         private string RepositoryFolder { get; set; } = "";
         private short paperEditNo = -1;
+        private FormatTable Format = null;
 
         public PaperEdit(short paperNo, string repositoryFolder)
         {
             paperEditNo = paperNo;
             RepositoryFolder = repositoryFolder;
+            if (Format == null)
+            {
+                Format= StaticObjects.Book.GetFormatTable();
+            }
+            else
+            {
+                throw new Exception("Error in PaperEdit Constructor: Format table not available - could not generate edit paper.");
+            }
             GetParagraphsFromRepository();
         }
 
@@ -30,7 +39,11 @@ namespace UbStandardObjects.Objects
         {
             foreach (string pathParagraphFile in Directory.GetFiles(RepositoryFolder, $@"Doc{paperEditNo:000}\Par_{paperEditNo:000}_*.md"))
             {
-                Paragraphs.Add(new ParagraphMarkDown(pathParagraphFile));
+                ParagraphMarkDown p = new ParagraphMarkDown(pathParagraphFile);
+                Format.GetParagraphFormatData(p);
+                Note note= Notes.GetNote(p);
+                p._status = note.Status;
+                Paragraphs.Add(p);
             }
             // Sort
 

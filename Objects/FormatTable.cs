@@ -39,6 +39,17 @@ namespace UbStandardObjects.Objects
             Formats.AddRange(tableRoot.ParagraphsFormat);
         }
 
+        public void GetParagraphFormatData(Paragraph p)
+        {
+            Paragraphsformat format= Formats.Find(f => f.Paper == p.Paper && f.Section == p.Section && f.Paragraph == p.ParagraphNo);
+            if (format != null)
+            {
+                p.FormatInt = format.Format;
+                p.Page = (short)format.Page;
+                p.Line = (short)format.Line;
+            }
+        }
+
     }
 
 
