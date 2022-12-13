@@ -4,6 +4,7 @@ using System.IO;
 using System.Text.Json.Serialization;
 using System.Xml;
 using System.Xml.Serialization;
+using static System.Collections.Specialized.BitVector32;
 
 namespace UbStandardObjects.Objects
 {
@@ -75,6 +76,16 @@ namespace UbStandardObjects.Objects
         }
 
         [JsonIgnore]
+        public int ID
+        {
+            get
+            {
+                return Paper * 1000000 + Section * 1000 + ParagraphNo;
+            }
+        }
+
+
+        [JsonIgnore]
         public string Description
         {
             get
@@ -110,11 +121,37 @@ namespace UbStandardObjects.Objects
         }
 
         /// <summary>
+        /// Provide a list of paper for this entrey when the entry is an entry paper
+        /// </summary>
+        [JsonIgnore]
+        public List<TOC_Entry> Papers { get; set; } = new List<TOC_Entry>();
+
+        /// <summary>
+        /// Provide a list of sections for this entrey when the entry is an entry paper
+        /// </summary>
+        [JsonIgnore]
+        public List<TOC_Entry> Sections { get; set; } = new List<TOC_Entry>();
+
+
+
+        /// <summary>
         /// Parameterless constructor used for xml serialization
         /// </summary>
         public TOC_Entry()
         {
 
+        }
+
+
+        public TOC_Entry(Paragraph p, string text= null)
+        {
+            Text = text == null? p.Text : text;
+            TranslationId = p.TranslationId;
+            Paper = p.Paper;
+            Section = p.Section;
+            ParagraphNo = p.ParagraphNo;
+            Page = p.Page;
+            Line = p.Line;
         }
 
 

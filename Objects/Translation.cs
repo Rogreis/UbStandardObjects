@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Xml.Linq;
 using System.Linq;
+using System.Diagnostics;
 
 namespace UbStandardObjects.Objects
 {
@@ -50,9 +51,71 @@ namespace UbStandardObjects.Objects
                                            select p.Entry;
                     toc.AddRange(paragraphEntries);
                 }
+
                 return toc;
             }
         }
+
+
+        private TOC_Entry GetFirstPartParagraph(short paperNo, string text)
+        {
+            Paragraph p= (from paper in Papers
+                          from par in paper.Paragraphs
+                         where par.Paper == paperNo && par.ParagraphNo == 0
+                        select par).First();
+            return new TOC_Entry(p, text);
+        }
+
+        private void GetPartPapersSections(TOC_Entry entry, short startPaperNo, short endPaperNo)
+        {
+            entry.Papers = ( from paper in Papers
+                            where paper.PaperNo >= startPaperNo && paper.PaperNo <= endPaperNo
+                          orderby paper.PaperNo ascending
+                           select paper.Entry).ToList();
+            foreach(TOC_Entry entryPaper in entry.Papers)
+            {
+                entryPaper.Sections = (    from paper in Papers
+                                           from p in paper.Paragraphs
+                                           where p.Paper == entryPaper.Paper && p.ParagraphNo == 0 && p.Section > 0
+                                        orderby p.Section ascending
+                                         select p.Entry).ToList();
+            }
+        }
+
+
+        [JsonIgnore]
+        public TOC_Table TOC
+        {
+            get
+            {
+                TOC_Table toc = new TOC_Table();
+
+                toc.Title = "Lista ded Documentos parea " + Description;
+
+                TOC_Entry intro = GetFirstPartParagraph(0, "Introdução");
+                GetPartPapersSections(intro, 0, 0);
+                TOC_Entry partI = GetFirstPartParagraph(1, "Parte I");
+                GetPartPapersSections(partI, 1, 31);
+                TOC_Entry partII = GetFirstPartParagraph(32, "Parte II");
+                GetPartPapersSections(partII, 32, 56);
+                TOC_Entry partIII = GetFirstPartParagraph(56, "Parte III");
+                GetPartPapersSections(partIII, 57, 119);
+                TOC_Entry partIV = GetFirstPartParagraph(120, "Parte IV");
+                GetPartPapersSections(partIV, 119, 196);
+
+                toc.Parts = new List<TOC_Entry>()
+                {
+                    intro,
+                    partI,
+                    partII,
+                    partIII,
+                    partIV
+                };
+
+                return toc;
+            }
+        }
+
 
         [JsonIgnore]
         public string Copyright
@@ -132,7 +195,7 @@ namespace UbStandardObjects.Objects
             }
             catch (Exception ex)
             {
-                StaticObjects.Logger.FatalError($"Fatal error in translation data {ex.Message}");
+                StaticObjects.Logger.FatalErrorAsync($"Fatal error in translation data {ex.Message}");
                 return false;
             }
 

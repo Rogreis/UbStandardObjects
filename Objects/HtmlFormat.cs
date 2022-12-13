@@ -43,7 +43,7 @@ namespace UbStandardObjects.Objects
 
         #region Styles
 
-        private string statusStyleHighlightedName(ParagraphStatus ParagraphStatus)
+        protected string statusStyleHighlightedName(ParagraphStatus ParagraphStatus)
         {
             return "stParHigh" + ParagraphStatus.ToString();
         }
@@ -59,7 +59,7 @@ namespace UbStandardObjects.Objects
             sb.AppendLine("}  ");
         }
 
-        private void ItalicBoldStyles(StringBuilder sb)
+        protected virtual void ItalicBoldStyles(StringBuilder sb)
         {
             sb.AppendLine("i, b, em  {  ");
             sb.AppendLine(" font-family: " + Param.FontFamily + ";");
@@ -69,19 +69,19 @@ namespace UbStandardObjects.Objects
             sb.AppendLine("}  ");
         }
 
-        private void HeaderStyle(StringBuilder sb, int header, float size)
+        protected virtual void HeaderStyle(StringBuilder sb, int header, float size, string align = "left")
         {
             sb.AppendLine($"h{header} {{");
             sb.AppendLine($"font-family: {Param.FontFamily};");
             sb.AppendLine($"font-size: {size}px;");
-            sb.AppendLine("text-align: center;");
+            sb.AppendLine($"text-align: {align};");
             sb.AppendLine("font-weight: bold;  ");
             sb.AppendLine("background-color: #0000FF;  ");
             sb.AppendLine("color: #FFFF00;  ");
             sb.AppendLine("}");
         }
 
-        private void LinkStyles(StringBuilder sb)
+        protected void LinkStyles(StringBuilder sb)
         {
             sb.AppendLine("a:link { ");
             sb.AppendLine($"  color: {(Param.IsDarkTheme ? Param.LightText : Param.DarkText)}; ");
@@ -248,8 +248,8 @@ namespace UbStandardObjects.Objects
             sb.AppendLine(" ");
             sb.AppendLine("</head>   ");
             sb.AppendLine("  ");
-            sb.AppendLine("<body class=\"commonText\" \">   ");
-            sb.AppendLine("<div class=\"container-fluid mt-5 commonText\">    ");
+            sb.AppendLine("<body class=\"textNormal\" \">   ");
+            sb.AppendLine("<div class=\"container-fluid mt-5 textNormal\">    ");
 
         }
 
@@ -302,7 +302,6 @@ namespace UbStandardObjects.Objects
             return $"<div {textDirection}>{openStyle} {p.Text}{closeStyle}</div>";
         }
 
-
         protected virtual string makeEditDIV(Paragraph p)
         {
             string textDirection = TextDirection(p);
@@ -336,8 +335,6 @@ namespace UbStandardObjects.Objects
             return $"<div id=\"{DivName(p)}\" class=\"{statusStyleName(p.Status)}\" {textDirection}><a href=\"about:ident\" ident=\"{p.AName}\" class=\"{statusStyleName(p.Status)}\">{p.Identification}</a>{openStyle} {p.Text}{closeStyle}</div>";
         }
         #endregion
-
-
 
         #region Private format routines
 

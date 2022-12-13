@@ -50,7 +50,7 @@ namespace UbStandardObjects.Objects
             {
                 string message = $"Could not initialize available translations. See log.";
                 StaticObjects.Logger.Error(message, ex);
-                StaticObjects.Logger.FatalError(message);
+                StaticObjects.Logger.FatalErrorAsync(message);
                 return false;
             }
         }
@@ -67,7 +67,7 @@ namespace UbStandardObjects.Objects
             if (trans == null)
             {
                 message = $"Missing translation number {id}. May be you do not have the correct data to use this tool.";
-                StaticObjects.Logger.FatalError(message);
+                StaticObjects.Logger.FatalErrorAsync(message);
             }
             return trans;
         }
@@ -118,7 +118,7 @@ namespace UbStandardObjects.Objects
             {
                 string message = $"Could not initialize translations {leftTranslationId} and {rightTranslationID}. See log.";
                 StaticObjects.Logger.Error(message, ex);
-                StaticObjects.Logger.FatalError(message);
+                StaticObjects.Logger.FatalErrorAsync(message);
                 return false;
             }
         }
@@ -152,7 +152,7 @@ namespace UbStandardObjects.Objects
             {
                 string message = $"Could not initialize translation {translationId}. See log.";
                 StaticObjects.Logger.Error(message, ex);
-                StaticObjects.Logger.FatalError(message);
+                StaticObjects.Logger.FatalErrorAsync(message);
                 return null;
             }
         }

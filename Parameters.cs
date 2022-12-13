@@ -45,6 +45,10 @@ namespace UbStandardObjects
 
 		public short LanguageIDRightTranslation { get; set; } = 34;
 
+        public short LanguageIDMiddleTranslation { get; set; } = -1;  // -1 indicate not to be shown
+
+		public bool ShowCompare { get; set; } = false;
+        
 		public int SearchPageSize { get; set; } = 20;
 
 		public bool ShowParagraphIdentification { get; set; } = true;

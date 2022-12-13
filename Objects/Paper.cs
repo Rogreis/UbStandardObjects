@@ -50,6 +50,14 @@ namespace UbStandardObjects.Objects
 
         public List<Paragraph> Paragraphs { get; set; } = new List<Paragraph>();
 
+        public TOC_Entry Entry
+        {
+            get
+            {
+                return new TOC_Entry(Paragraphs[0]);
+            }
+        }
+
         /// <summary>
         /// Constructor parameterless
         /// </summary>
