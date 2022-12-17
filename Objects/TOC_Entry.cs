@@ -24,6 +24,18 @@ namespace UbStandardObjects.Objects
             return new TOC_Entry(newTranslationId, entry.Paper, entry.Section, entry.ParagraphNo, entry.Page, entry.Line);
         }
 
+        public static TOC_Entry FromHref(string href)
+        {
+            TOC_Entry entry = new TOC_Entry();
+            char[] sep = { ';', ':', '.'};
+            string[] parts = href.Split(sep, StringSplitOptions.RemoveEmptyEntries);
+            entry.Paper = Convert.ToInt16(parts[0]);
+            entry.Section = Convert.ToInt16(parts[1]);
+            entry.ParagraphNo = Convert.ToInt16(parts[2]);
+            return entry;
+        }
+
+
         [JsonIgnore]
         public string ParagraphID
         {

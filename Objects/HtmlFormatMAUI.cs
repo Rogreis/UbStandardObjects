@@ -247,8 +247,10 @@ namespace UbStandardObjects.Objects
         {
             try
             {
-                pageStart(sb, paperNo, true);
+                //pageStart(sb, paperNo, true);
                 //titleLine(sb);
+                Styles(sb);
+
                 sb.AppendLine("<table border=\"1\" width=\"100%\" id=\"table1\" cellspacing=\"4\" cellpadding=\"0\">");
 
                 for (int i = 0; i < rightTranslation.Count; i++)
@@ -271,7 +273,7 @@ namespace UbStandardObjects.Objects
                 }
 
                 sb.AppendLine("</table>");
-                pageEnd(sb);
+                //pageEnd(sb);
 
             }
             catch (Exception ex)
@@ -319,9 +321,6 @@ namespace UbStandardObjects.Objects
             StringBuilder sb = new StringBuilder();
 
             HtmlFomatPage(sb, paperNo, rightParagraphs, middleParagraphs, leftParagraphs, showCompare);
-
-            string pathHtml = @"C:\Trabalho\Lixo\pagina.html";
-            File.WriteAllText(pathHtml, sb.ToString(), Encoding.UTF8);
 
             return sb.ToString();
         }
