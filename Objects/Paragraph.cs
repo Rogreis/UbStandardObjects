@@ -195,7 +195,7 @@ namespace UbStandardObjects.Objects
 
         private void FormatText(StringBuilder sb, bool isEdit, bool insertAnchor, string startTag, string endTag)
         {
-            sb.Append($"{startTag}{(insertAnchor ? $"<a name =\"{AName}\"/>" : "")} {Text}{endTag}");
+            sb.Append($"{startTag}{(insertAnchor ? $"<a name =\"{AName}\"/>" : "")} {ID} {Text}{endTag}");
         }
 
 

@@ -148,18 +148,19 @@ namespace UbStandardObjects.Objects
                 WriteIndented = true,
             };
             var root = JsonSerializer.Deserialize<JsonRootobject>(jsonString, options);
-            this.LanguageID = root.LanguageID;
-            this.Description = root.Description;
-            this.TIN = root.TIN;
-            this.TUB = root.TUB;
-            this.Version = root.Version;
-            this.TextButton = root.TextButton;
-            this.CultureID = root.CultureID;
-            this.UseBold = root.UseBold;
-            this.RightToLeft = root.RightToLeft;
-            this.StartingYear = root.StartingYear;
-            this.EndingYear = root.EndingYear;
-            this.PaperTranslation = root.PaperTranslation;
+
+            //this.LanguageID = root.LanguageID;
+            //this.Description = root.Description;
+            //this.TIN = root.TIN;
+            //this.TUB = root.TUB;
+            //this.Version = root.Version;
+            //this.TextButton = root.TextButton;
+            //this.CultureID = root.CultureID;
+            //this.UseBold = root.UseBold;
+            //this.RightToLeft = root.RightToLeft;
+            //this.StartingYear = root.StartingYear;
+            //this.EndingYear = root.EndingYear;
+            //this.PaperTranslation = root.PaperTranslation;
 
             if (root.Papers != null)
             {
