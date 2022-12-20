@@ -14,6 +14,8 @@ namespace UbStandardObjects.Objects
 
         public Translation LeftTranslation { get; set; }
 
+        public Translation MiddleTranslation { get; set; }
+
         public Translation RightTranslation { get; set; }
 
         public List<Translation> Translations { get; set; } = null;

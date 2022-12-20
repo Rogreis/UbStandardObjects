@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using System.Xml;
 using System.Globalization;
 using System.Text.Json.Serialization;
+using System.Runtime.CompilerServices;
 
 namespace UbStandardObjects.Objects
 {
@@ -164,6 +165,41 @@ namespace UbStandardObjects.Objects
             TranslationId = translationId;
         }
 
+        private string GetCssClass(bool isEdit)
+        {
+            string cssClass = "commonText";
+
+            if (isEdit)
+            {
+                switch (Status)
+                {
+                    case ParagraphStatus.Started:
+                        cssClass = "parStarted";
+                        break;
+                    case ParagraphStatus.Working:
+                        cssClass = "parWorking";
+                        break;
+                    case ParagraphStatus.Ok:
+                        cssClass = "parOk";
+                        break;
+                    case ParagraphStatus.Doubt:
+                        cssClass = "parDoubt";
+                        break;
+                    case ParagraphStatus.Closed:
+                        cssClass = "parClosed";
+                        break;
+                }
+            }
+            return cssClass;
+        }
+
+        private void FormatText(StringBuilder sb, bool isEdit, bool insertAnchor, string startTag, string endTag)
+        {
+            sb.Append($"{startTag}{(insertAnchor ? $"<a name =\"{AName}\"/>" : "")} {Text}{endTag}");
+        }
+
+
+
         // Add this if using nested MemberwiseClone.
         // This is a class, which is a reference type, so cloning is more difficult.
         public Paragraph DeepCopy()
@@ -171,6 +207,33 @@ namespace UbStandardObjects.Objects
             // Clone the root ...
             Paragraph other = (Paragraph)this.MemberwiseClone();
             return other;
+        }
+
+
+        public string GetHtml(bool isEdit, bool insertAnchor)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"<div class=\"p-3 mb-2 {GetCssClass(isEdit)}\">");
+            switch (Format)
+            {
+                case ParagraphHtmlType.BookTitle:
+                    FormatText(sb, isEdit, false, "<h1>", "</h1>");
+                    break;
+                case ParagraphHtmlType.PaperTitle:
+                    FormatText(sb, isEdit, insertAnchor, "<h2>", "</h2>");
+                    break;
+                case ParagraphHtmlType.SectionTitle:
+                    FormatText(sb, isEdit, insertAnchor, "<h3>", "</h3>");
+                    break;
+                case ParagraphHtmlType.NormalParagraph:
+                    FormatText(sb, isEdit, insertAnchor, "<p>", "</p>");
+                    break;
+                case ParagraphHtmlType.IdentedParagraph:
+                    FormatText(sb, isEdit, insertAnchor, "<bloquote><p>", "</p></bloquote>");
+                    break;
+            }
+            sb.AppendLine("</div>");
+            return sb.ToString();
         }
 
         public override string ToString()

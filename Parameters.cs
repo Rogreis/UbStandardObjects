@@ -4,7 +4,18 @@ using UbStandardObjects.Objects;
 
 namespace UbStandardObjects
 {
-	public struct ColorSerial
+
+    public enum TextShowOption
+    {
+        RightOnly = 0,
+        LeftRight = 1,
+        LeftMiddleRight = 2,
+        LeftRightCompare = 3,
+        LeftMiddleRightCompare = 4
+    }
+
+
+    public struct ColorSerial
     {
 		public byte A { get; set; }
 		public byte R { get; set; }
@@ -55,10 +66,12 @@ namespace UbStandardObjects
 
 		public bool ShowBilingual { get; set; } = true;
 
-		/// <summary>
-		/// Max items stored for  search and index text
-		/// </summary>
-		public int MaxExpressionsStored { get; set; } = 50;
+        public TextShowOption TextShowOption { get; set; } = TextShowOption.LeftRight;
+
+        /// <summary>
+        /// Max items stored for  search and index text
+        /// </summary>
+        public int MaxExpressionsStored { get; set; } = 50;
 
 		public List<string> SearchStrings { get; set; } = new List<string>();
 
