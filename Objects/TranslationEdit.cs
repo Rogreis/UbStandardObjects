@@ -34,7 +34,6 @@ namespace UbStandardObjects.Objects
 
         private Paper GetPaperEdit(short paperNo)
         {
-            FormatTable table = StaticObjects.Book.GetFormatTable();
             Paper paper = new Paper();
             paper.Paragraphs = new List<Paragraph>();
             Translation EnglishTranslation = StaticObjects.Book.GetTranslation(0);

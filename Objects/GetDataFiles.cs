@@ -22,18 +22,11 @@ namespace UbStandardObjects.Objects
         //private string currentAnnotationsFileNAme = "Annotations";
 
 
-
-        /// <summary>
-        /// Folder for existing files (translations)
-        /// </summary>
-        protected string ApplicationFolderTubFiles = "";
-
         protected Parameters Param = null;
 
         public GetDataFiles(Parameters param)
         {
             Param = param;
-            ApplicationFolderTubFiles = Path.Combine(Param.ApplicationFolder, TubFilesFolder);
         }
 
         #region File path creation
@@ -267,10 +260,15 @@ namespace UbStandardObjects.Objects
 
             if (translation.Papers.Count > 0)
             {
+                if (!translation.CheckData())
+                {
+                    return null;
+                }
+
                 return translation;
             }
 
-            // FIX ME: IsEditingTranslation is hard codded here, but needs to be 
+            // FIX ME: IsEditingTranslation is hard codded here, but needs to come from repository
             if (translationId == 2)
             {
                 TranslationEdit translatioEdit= translation as TranslationEdit;

@@ -17,7 +17,7 @@ namespace UbStandardObjects
 
 		public abstract void Error(string message, Exception ex);
 
-		public abstract void FatalErrorAsync(string message);
+		public abstract void FatalError(string message);
 
 		public abstract void NonFatalError(string message);
 
@@ -29,13 +29,13 @@ namespace UbStandardObjects
         public void IsNull(object obj, string message)
 		{
 			if (obj == null)
-				FatalErrorAsync(message);
+				FatalError(message);
 		}
 
 		public void InInterval(short value, short minValue, short maxValue, string message)
 		{
 			if (value < minValue || value > maxValue )
-				FatalErrorAsync(message);
+				FatalError(message);
 		}
 
 		protected void FireShowMessage(string message, bool isError = false, bool isFatal = false)

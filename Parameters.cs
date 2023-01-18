@@ -104,10 +104,6 @@ namespace UbStandardObjects
 
 		public string SqlServerConnectionString { get; set; }
 
-		public string FontFamilyInfo { get; set; } = "Verdana";
-
-		public virtual double FontSizeInfo { get; set; } = 10;
-
 		public virtual ColorSerial HighlightColor { get; set; } = new ColorSerial(0, 0, 102, 255); // rgb(0, 102, 255)
 
 		// Quick search
@@ -131,28 +127,43 @@ namespace UbStandardObjects
 
 	
 		/// <summary>
-		/// Currente executable folder initialize every execution
+		/// Current data folder
 		/// </summary>
-		public string ApplicationFolder { get; set; } = "";
+		public string ApplicationDataFolder { get; set; } = "";
 
         /// <summary>
-		/// Source of TUB Files used only by UbStudyHelp
-		/// </summary>
-		public string UbStudyHelpTubFilesSourcePath = "";
+        /// Folder to store local lucene index search data
+        /// </summary>
+        public string IndexSearchFolders { get; set; } = "";
 
         /// <summary>
-        /// Git associated repository folder
+        /// Folder to store local lucene TUB search data
+        /// </summary>
+        public string TubSearchFolders { get; set; } = "";
+
+        /// <summary>
+        /// Repository for translations
         /// </summary>
         public string TUB_Files_RepositoryFolder { get; set; } = "";
-        
-		/// <summary>
-        /// Work local repository for paragraphs
+
+        /// <summary>
+        /// Github source for translations
+        /// </summary>
+        public string TUB_Files_Url { get; set; } = "https://github.com/Rogreis/TUB_Files.git";
+
+        /// <summary>
+        /// Repository for editing translation
         /// </summary>
         public string EditParagraphsRepositoryFolder { get; set; } = null;
 
-		/// <summary>
-		/// Full book pages local repository
-		/// </summary>
+        /// <summary>
+        /// Github source for editing translation
+        /// </summary>
+        public string EditParagraphsUrl { get; set; } = "https://github.com/Rogreis/PtAlternative.git";
+        
+        /// <summary>
+        /// Full book pages local repository
+        /// </summary>
         public string EditBookRepositoryFolder { get; set; } = null;
 
 		/// <summary>
@@ -160,9 +171,9 @@ namespace UbStandardObjects
 		/// </summary>
 		public string UrlRepository { get; set; } = null;
 
-        public float FontSize { get; set; } = 14;
+        public float FontSize { get; set; } = 10;
 
-        public string FontFamily { get; set; } = "Verdana,Arial,Helvetica";
+        public string FontFamily { get; set; } = "Georgia, Verdana,Arial,Helvetica";
 
         public bool IsDarkTheme { get; set; } = true;
 

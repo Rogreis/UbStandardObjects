@@ -196,7 +196,7 @@ namespace UbStandardObjects.Objects
             }
             catch (Exception ex)
             {
-                StaticObjects.Logger.FatalErrorAsync($"Fatal error in translation data {ex.Message}");
+                StaticObjects.Logger.FatalError($"Fatal error in translation data {ex.Message}");
                 return false;
             }
 

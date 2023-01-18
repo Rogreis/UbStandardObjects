@@ -176,7 +176,7 @@ namespace UbStandardObjects.Objects
 
             string backColorCommon = "#262626";
             string textColorCommon = "#FFFFFF";
-            string fontFamily = $"'{Param.FontFamilyInfo}'";
+            string fontFamily = $"'{Param.FontFamily}'";
             string fontSize = $"{Param.FontSize}px";
 
             sb.AppendLine(".parStarted, .parWorking, .parDoubt, .parOk, .parClosed, .commonText ");
