@@ -173,7 +173,7 @@ namespace UbStandardObjects
 
         public float FontSize { get; set; } = 10;
 
-        public string FontFamily { get; set; } = "Georgia, Verdana,Arial,Helvetica";
+        public string FontFamily { get; set; } = "Georgia,Verdana,Arial,Helvetica";
 
         public bool IsDarkTheme { get; set; } = true;
 
