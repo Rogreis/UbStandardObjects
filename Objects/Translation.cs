@@ -12,6 +12,7 @@ namespace UbStandardObjects.Objects
 
     public class Translation
     {
+        protected const string TocTableFileName = "TOC_Table.json";
         public const short NoTranslation = -1;
 
         public short LanguageID { get; set; }
@@ -30,6 +31,9 @@ namespace UbStandardObjects.Objects
 
         public List<Paper> Papers { get; set; } = new List<Paper>();
 
+
+
+        #region Non Serializable properties
         /// <summary>
         /// List of available anootations for this translation
         /// </summary>
@@ -53,32 +57,6 @@ namespace UbStandardObjects.Objects
                 }
 
                 return toc;
-            }
-        }
-
-
-        private TOC_Entry GetFirstPartParagraph(short paperNo, string text)
-        {
-            Paragraph p= (from paper in Papers
-                          from par in paper.Paragraphs
-                         where par.Paper == paperNo && par.ParagraphNo == 0
-                        select par).First();
-            return new TOC_Entry(p, text);
-        }
-
-        private void GetPartPapersSections(TOC_Entry entry, short startPaperNo, short endPaperNo)
-        {
-            entry.Papers = ( from paper in Papers
-                            where paper.PaperNo >= startPaperNo && paper.PaperNo <= endPaperNo
-                          orderby paper.PaperNo ascending
-                           select paper.Entry).ToList();
-            foreach(TOC_Entry entryPaper in entry.Papers)
-            {
-                entryPaper.Sections = (    from paper in Papers
-                                           from p in paper.Paragraphs
-                                           where p.Paper == entryPaper.Paper && p.ParagraphNo == 0 && p.Section > 0
-                                        orderby p.Section ascending
-                                         select p.Entry).ToList();
             }
         }
 
@@ -136,11 +114,68 @@ namespace UbStandardObjects.Objects
             }
         }
 
+        #endregion
+
+        /// <summary>
+        /// Parameter less constructor
+        /// </summary>
         public Translation()
         {
         }
 
-        public void GetData(string jsonString)
+
+
+        private TOC_Entry GetFirstPartParagraph(short paperNo, string text)
+        {
+            Paragraph p = (from paper in Papers
+                           from par in paper.Paragraphs
+                           where par.Paper == paperNo && par.ParagraphNo == 0
+                           select par).First();
+            return new TOC_Entry(p, text);
+        }
+
+        private void GetPartPapersSections(TOC_Entry entry, short startPaperNo, short endPaperNo)
+        {
+            entry.Papers = (from paper in Papers
+                            where paper.PaperNo >= startPaperNo && paper.PaperNo <= endPaperNo
+                            orderby paper.PaperNo ascending
+                            select paper.Entry).ToList();
+            foreach (TOC_Entry entryPaper in entry.Papers)
+            {
+                entryPaper.Sections = (from paper in Papers
+                                       from p in paper.Paragraphs
+                                       where p.Paper == entryPaper.Paper && p.ParagraphNo == 0 && p.Section > 0
+                                       orderby p.Section ascending
+                                       select p.Entry).ToList();
+            }
+        }
+
+        /// <summary>
+        /// Get a paper data for an editing translations
+        /// </summary>
+        /// <param name="paperNo"></param>
+        /// <returns></returns>
+        private Paper GetPaperEdit(short paperNo)
+        {
+            Paper paper = new Paper();
+            paper.Paragraphs = new List<Paragraph>();
+            Translation EnglishTranslation = StaticObjects.Book.GetTranslation(0);
+            string folderPaper = Path.Combine(StaticObjects.Parameters.EditParagraphsRepositoryFolder, $"Doc{paperNo:000}");
+            foreach (string filePath in Directory.GetFiles(folderPaper, "*.md"))
+            {
+                ParagraphMarkDown paragraph = new ParagraphMarkDown(filePath);
+                paragraph.FormatInt = EnglishTranslation.GetFormat(paragraph);
+                paper.Paragraphs.Add(paragraph);
+            }
+            return paper;
+        }
+
+
+        /// <summary>
+        /// Get all papers data for a non editing translation
+        /// </summary>
+        /// <param name="jsonString"></param>
+        public void GetPapersData(string jsonString)
         {
             var options = new JsonSerializerOptions
             {
@@ -148,19 +183,6 @@ namespace UbStandardObjects.Objects
                 WriteIndented = true,
             };
             var root = JsonSerializer.Deserialize<JsonRootobject>(jsonString, options);
-
-            //this.LanguageID = root.LanguageID;
-            //this.Description = root.Description;
-            //this.TIN = root.TIN;
-            //this.TUB = root.TUB;
-            //this.Version = root.Version;
-            //this.TextButton = root.TextButton;
-            //this.CultureID = root.CultureID;
-            //this.UseBold = root.UseBold;
-            //this.RightToLeft = root.RightToLeft;
-            //this.StartingYear = root.StartingYear;
-            //this.EndingYear = root.EndingYear;
-            //this.PaperTranslation = root.PaperTranslation;
 
             if (root.Papers != null)
             {
@@ -202,10 +224,17 @@ namespace UbStandardObjects.Objects
 
         }
 
-
-        public virtual Paper Paper(short PaperNo)
+        /// <summary>
+        /// Return a Paper with data
+        /// For editing translation the data is got for a paper only direct from repository
+        /// </summary>
+        /// <param name="paperNo"></param>
+        /// <returns></returns>
+        public virtual Paper Paper(short paperNo)
         {
-            return Papers.Find(p => p.PaperNo == PaperNo);
+            if (IsEditingTranslation)
+                 return GetPaperEdit(paperNo);
+            else return Papers.Find(p => p.PaperNo == paperNo);
         }
 
         /// <summary>

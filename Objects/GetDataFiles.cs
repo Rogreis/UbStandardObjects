@@ -269,28 +269,15 @@ namespace UbStandardObjects.Objects
             }
 
             // FIX ME: IsEditingTranslation is hard codded here, but needs to come from repository
-            if (translationId == 2)
-            {
-                TranslationEdit translatioEdit= translation as TranslationEdit;
-                if (translatioEdit == null)
-                {
-                    StaticObjects.Book.Translations.Remove(translation);
-                    translatioEdit = new TranslationEdit(translation, StaticObjects.Parameters.EditParagraphsRepositoryFolder);
-                    StaticObjects.Book.Translations.Add(translatioEdit);
-                }
-                translatioEdit.IsEditingTranslation = true;
-                translatioEdit.Annotations = null;
-                return translation;
-            }
-            else
+            if (!translation.IsEditingTranslation)
             {
                 string json = GetFile(translationId, true);
-                translation.GetData(json);
+                translation.GetPapersData(json);
 
                 // Loading annotations
                 translation.Annotations = null;
-                return translation;
             }
+            return translation;
 
 
         }
