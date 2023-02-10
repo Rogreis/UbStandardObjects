@@ -10,9 +10,14 @@ using System.Diagnostics;
 namespace UbStandardObjects.Objects
 {
 
+
+
     public class Translation
     {
+        [JsonIgnore]
         protected const string TocTableFileName = "TOC_Table.json";
+
+        [JsonIgnore]
         public const short NoTranslation = -1;
 
         public short LanguageID { get; set; }
@@ -28,9 +33,10 @@ namespace UbStandardObjects.Objects
         public int EndingYear { get; set; }
         public string PaperTranslation { get; set; }
         public bool IsEditingTranslation { get; set; } = false;
+        public string Hash { get; set; } = "";
 
+        [JsonIgnore]
         public List<Paper> Papers { get; set; } = new List<Paper>();
-
 
 
         #region Non Serializable properties
@@ -233,7 +239,7 @@ namespace UbStandardObjects.Objects
         public virtual Paper Paper(short paperNo)
         {
             if (IsEditingTranslation)
-                 return GetPaperEdit(paperNo);
+                return GetPaperEdit(paperNo);
             else return Papers.Find(p => p.PaperNo == paperNo);
         }
 
@@ -298,8 +304,13 @@ namespace UbStandardObjects.Objects
         public short StartingYear { get; set; }
         public short EndingYear { get; set; }
         public string PaperTranslation { get; set; }
+        public bool IsEditingTranslation { get; set; }
+        public string Hash { get; set; } = "";
         public JsonPaper[] Papers { get; set; }
     }
+
+
+
 
     internal class JsonPaper
     {
@@ -311,6 +322,38 @@ namespace UbStandardObjects.Objects
         public Translation[] AvailableTranslations { get; set; }
     }
 
+    //// =============================
+
+
+
+    public class Rootobject
+    {
+        public Class1[] Property1 { get; set; }
+    }
+
+    public class Class1
+    {
+        public int LanguageID { get; set; }
+        public string Description { get; set; }
+        public int Version { get; set; }
+        public string TIN { get; set; }
+        public string TUB { get; set; }
+        public string TextButton { get; set; }
+        public int CultureID { get; set; }
+        public bool UseBold { get; set; }
+        public bool RightToLeft { get; set; }
+        public int StartingYear { get; set; }
+        public int EndingYear { get; set; }
+        public string PaperTranslation { get; set; }
+        public bool IsEditingTranslation { get; set; }
+        public string Hash { get; set; }
+        public object[] Papers { get; set; }
+    }
+
+
+
+    //// =============================
+
 
     /// <summary>
     /// Classe used to deserialize json string
@@ -319,15 +362,28 @@ namespace UbStandardObjects.Objects
     {
         public static List<Translation> DeserializeJson(string jsonString)
         {
-            var options = new JsonSerializerOptions
+            try
             {
-                AllowTrailingCommas = true
-            };
+                var options = new JsonSerializerOptions
+                {
+                    AllowTrailingCommas = true,
+                    WriteIndented = true,
+                    IncludeFields = true
+                };
 
-            var translationsRoot = JsonSerializer.Deserialize<TranslationsRoot>(jsonString, options);
-            List<Translation> list = new List<Translation>();
-            list.AddRange(translationsRoot.AvailableTranslations);
-            return list;
+
+                var translationsRoot = JsonSerializer.Deserialize<TranslationsRoot>(jsonString, options);
+                List<Translation> list = new List<Translation>();
+                list.AddRange(translationsRoot.AvailableTranslations);
+                return list;
+            }
+            catch (Exception ex)
+            {
+                string message = $"Could not deserialize avalable trasnslations list json. See log.";
+                StaticObjects.Logger.Error(message, ex);
+                StaticObjects.Logger.FatalError(message);
+                return null;
+            }
         }
     }
 
