@@ -220,6 +220,17 @@ namespace UbStandardObjects.Objects
             {
                 StaticObjects.Logger.InInterval(LanguageID, 0, 196, $"Invalid translation number: {LanguageID}");
                 StaticObjects.Logger.IsNull(PaperTranslation, $"Paper name is missing for translation {LanguageID}");
+                Paper paper56 = Paper(56);
+                if (paper56 != null)
+                {
+                    Paragraph p= paper56.Paragraphs.Find(p => p.PK_Seq == 92);
+                    if(p != null ) 
+                    {
+                        p.Section = 10;
+                        p.ParagraphNo = 23;
+                        p.Text = "* * * * *";
+                    }
+                }
                 return true;
             }
             catch (Exception ex)
