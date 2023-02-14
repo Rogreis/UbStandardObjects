@@ -189,7 +189,15 @@ namespace UbStandardObjects
 
         public string LightTextGray { get; set; } = "bisque";
 
-		public string BackTextColor
+        public string GitAuthorName { get; set; } = "";
+
+        public string GitEmail { get; set; } = "";
+
+        public string GitCommitMessage { get; set; } = "";
+
+        public string GitPassword { get; set; } = "";
+
+        public string BackTextColor
 		{
 			get
 			{
