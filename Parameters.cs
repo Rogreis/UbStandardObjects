@@ -160,6 +160,11 @@ namespace UbStandardObjects
         /// Github source for editing translation
         /// </summary>
         public string EditParagraphsUrl { get; set; } = "https://github.com/Rogreis/PtAlternative.git";
+
+        /// <summary>
+        /// Branch used for edit data
+        /// </summary>
+        public string BranchUsed { get; set; } = "correcoes";
         
         /// <summary>
         /// Full book pages local repository
@@ -189,7 +194,15 @@ namespace UbStandardObjects
 
         public string LightTextGray { get; set; } = "bisque";
 
-		public string BackTextColor
+        public string GitAuthorName { get; set; } = "";
+
+        public string GitEmail { get; set; } = "";
+
+        public string GitCommitMessage { get; set; } = "";
+
+        public string GitPassword { get; set; } = "";
+
+        public string BackTextColor
 		{
 			get
 			{
