@@ -155,6 +155,14 @@ namespace UbStandardObjects.Objects
         public bool IsEditTranslation { get; set; } = false;
 
 
+        public bool IsDivider
+        {
+          get
+            {
+                return Text.StartsWith("* * *") || Text.StartsWith("~ ~ ~");
+            }
+        }
+
         public Paragraph()
         {
         }
