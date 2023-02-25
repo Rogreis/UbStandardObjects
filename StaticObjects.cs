@@ -34,6 +34,7 @@ namespace UbStandardObjects
 
 		public static Book Book { get; set; } = null;
 
+
         #region events
 
         public static event dlShowMessage ShowMessage= null;

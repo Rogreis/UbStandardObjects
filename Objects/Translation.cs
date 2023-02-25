@@ -50,7 +50,7 @@ namespace UbStandardObjects.Objects
                 foreach (Paper paper in Papers)
                 {
                     var paragraphEntries = from p in paper.Paragraphs
-                                           where p.ParagraphNo == 0
+                                           where p.ParagraphNo == 0 && !p.IsDivider
                                            orderby p.PK_Seq ascending
                                            select p.Entry;
                     toc.AddRange(paragraphEntries);

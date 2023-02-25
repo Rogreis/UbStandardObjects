@@ -39,7 +39,7 @@ namespace UbStandardObjects.Objects
 
         private static string RepositoryNotesPath(short paperNo)
         {
-            return Path.Combine(StaticObjects.Parameters.EditParagraphsRepositoryFolder, $@"{ParagraphMarkDown.FolderPath(paperNo)}\Notes.json");
+            return Path.Combine(StaticObjects.Parameters.EditParagraphsRepositoryFolder, RelativeNotesPath(paperNo));
         }
 
 
@@ -52,6 +52,11 @@ namespace UbStandardObjects.Objects
                 throw new Exception($"Could not get notes for paper {paperNo}");
             }
             return new List<Note>(root.Notes);
+        }
+
+        public static string RelativeNotesPath(short paperNo)
+        {
+            return $@"{ParagraphMarkDown.FolderPath(paperNo)}\Notes.json";
         }
 
         public static Note GetNote(Paragraph p)
