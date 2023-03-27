@@ -43,7 +43,7 @@ namespace UbStandardObjects.Objects
         }
 
 
-        private static List<Note> GetNotes(short paperNo)
+        public static List<Note> GetNotes(short paperNo)
         {
             string jsonString = File.ReadAllText(RepositoryNotesPath(paperNo));
             NotesRoot root = JsonSerializer.Deserialize<NotesRoot>(jsonString, Options);
@@ -59,9 +59,8 @@ namespace UbStandardObjects.Objects
             return $@"{ParagraphMarkDown.FolderPath(paperNo)}\Notes.json";
         }
 
-        public static Note GetNote(Paragraph p)
+        public static Note GetNote(List<Note> list, Paragraph p)
         {
-            List<Note> list = GetNotes(p.Paper);
             Note note = list.Find(n => n.Paper == p.Paper && n.Section == p.Section && n.Paragraph == p.ParagraphNo);
             if (note == null)
             {
@@ -70,19 +69,12 @@ namespace UbStandardObjects.Objects
             return note;
         }
 
-        public static void SaveNotes(ParagraphMarkDown p)
+        public static void SaveNotes(List<Note> list, ParagraphMarkDown p, Note note)
         {
             try
             {
-                List<Note> list = GetNotes(p.Paper);
-                Note note = list.Find(n => n.Paper == p.Paper && n.Section == p.Section && n.Paragraph == p.ParagraphNo);
-                if (note == null)
-                {
-                    throw new Exception($"Could not get note for Paragraph {p}");
-                }
-
                 note.TranslatorNote= p.TranslatorNote;
-                note.Status = (short)p._status;
+                // note.Status comes from caller
                 note.Notes= p.Comment;
                 note.LastDate= DateTime.Now.ToUniversalTime();
                 note.Format = (short)p.FormatInt;

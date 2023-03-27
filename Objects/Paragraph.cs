@@ -36,6 +36,8 @@ namespace UbStandardObjects.Objects
     }
 
 
+
+
     public class Paragraph
     {
         [JsonPropertyName("TranslationID")]
@@ -60,7 +62,7 @@ namespace UbStandardObjects.Objects
         public int _status { get; set; }
 
         [JsonIgnore]
-        public ParagraphStatus Status
+        public virtual ParagraphStatus Status
         {
             get
             {

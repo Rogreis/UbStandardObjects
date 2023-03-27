@@ -18,6 +18,32 @@ namespace UbStandardObjects.Objects
 
         public DateTime LastDate { get; set; }
 
+        [JsonIgnore]
+        public override ParagraphStatus Status
+        {
+            get
+            {
+                // return the current status inside the notes
+                PaperEdit paper = (PaperEdit)(StaticObjects.Book.RightTranslation.IsEditingTranslation? StaticObjects.Book.RightTranslation.Paper(Paper) :
+                            (StaticObjects.Book.LeftTranslation.IsEditingTranslation? StaticObjects.Book.LeftTranslation.Paper(Paper) : null)) ?? throw new Exception("No edit translation");
+                Note note = Notes.GetNote(paper.NotesList, this);
+                _status= note.Status;
+                return (ParagraphStatus)_status;
+            }
+            set
+            {
+                PaperEdit paper = (PaperEdit)(StaticObjects.Book.RightTranslation.IsEditingTranslation ? StaticObjects.Book.RightTranslation.Paper(Paper) :
+                            (StaticObjects.Book.LeftTranslation.IsEditingTranslation ? StaticObjects.Book.LeftTranslation.Paper(Paper) : null));
+                if (paper == null)
+                {
+                    throw new Exception("No edit translation");
+                }
+                Note note = Notes.GetNote(paper.NotesList, this);
+                _status = (int)value;
+                note.Status = (short)value;
+            }
+        }
+
 
         public static string RelativeFilePath(Paragraph p)
         {
@@ -166,19 +192,6 @@ namespace UbStandardObjects.Objects
             }
         }
 
-        public bool SaveNotes(string repositoryPath)
-        {
-            try
-            {
-                Notes.SaveNotes(this);
-                return true;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-
+   
     }
 }

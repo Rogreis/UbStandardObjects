@@ -31,8 +31,6 @@ namespace UbStandardObjects.Objects
 
         public List<Paper> Papers { get; set; } = new List<Paper>();
 
-
-
         #region Non Serializable properties
         /// <summary>
         /// List of available anootations for this translation
@@ -155,9 +153,9 @@ namespace UbStandardObjects.Objects
         /// </summary>
         /// <param name="paperNo"></param>
         /// <returns></returns>
-        private Paper GetPaperEdit(short paperNo)
+        public PaperEdit GetPaperEdit(short paperNo)
         {
-            Paper paper = new Paper();
+            PaperEdit paper = new PaperEdit(paperNo, StaticObjects.Parameters.EditParagraphsRepositoryFolder);
             paper.Paragraphs = new List<Paragraph>();
             Translation EnglishTranslation = StaticObjects.Book.GetTranslation(0);
             string folderPaper = Path.Combine(StaticObjects.Parameters.EditParagraphsRepositoryFolder, $"Doc{paperNo:000}");

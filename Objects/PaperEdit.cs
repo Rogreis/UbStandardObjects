@@ -16,6 +16,8 @@ namespace UbStandardObjects.Objects
         private string RepositoryFolder { get; set; } = "";
         private short paperEditNo = -1;
 
+        public List<Note> NotesList { get; set; } = null;
+
         public PaperEdit(short paperNo, string repositoryFolder)
         {
             paperEditNo = paperNo;
@@ -32,9 +34,10 @@ namespace UbStandardObjects.Objects
             {
                 ParagraphMarkDown p = new ParagraphMarkDown(pathParagraphFile);
                 StaticObjects.Book.FormatTableObject.GetParagraphFormatData(p);
-                Note note= Notes.GetNote(p);
-                p._status = note.Status;
                 Paragraphs.Add(p);
+                GetNotesData(p);
+                Note note = Notes.GetNote(NotesList, p);
+                p.SetNote(note);
             }
             // Sort
 
@@ -67,7 +70,11 @@ namespace UbStandardObjects.Objects
         /// <param name="paragraph"></param>
         public void GetNotesData(ParagraphMarkDown paragraph)
         {
-            Note note = Notes.GetNote(paragraph);
+            if (NotesList == null) 
+            {
+                NotesList = Notes.GetNotes(PaperNo);
+            }
+            Note note = Notes.GetNote(NotesList, paragraph);
             paragraph.SetNote(note);
         }
 
